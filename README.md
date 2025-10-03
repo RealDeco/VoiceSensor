@@ -3,6 +3,9 @@
 
 **3-in-1 Voice Assistant, Presence Sensor, and Light Sensor for Home Assistant**  
 
+This is a couople of years old project of mine, yaml is old and very basic but amazingly still works :)
+there's no microwakeword since the supermini doesn't have psram and no timer function in code.
+
 ---
 
 ## 📸 Images  
