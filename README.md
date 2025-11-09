@@ -29,7 +29,7 @@ there's no microwakeword since the supermini doesn't have psram and no timer fun
 
 ## 🛠️ Parts List  
 
-- **1x ESP32-S3 SuperMini**  
+- **1x ESP32-S3 Zero**  
 - **1x LD2410C Presence Sensor**  
 - **1x BH1750 Light Sensor**  
 - **1x 16mm Push Button**  
