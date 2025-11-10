@@ -7,7 +7,8 @@ This is a couople of years old project of mine, yaml is old and very basic but a
 there's no microwakeword since the supermini doesn't have psram and no timer function in code.
 
 NEW: the VoiceSensorNEW.yaml only works with esp32-s3 zero (not supermini) because the zero has 2mb psram, supermini doesn't.
-To have response output from the NEW version on external mediaplayer see [here](tts_uri.md)
+To have response output from the NEW version on external mediaplayer see [here](tts_uri.md),
+This version uses on-device microwakeword (max 2.)
 ---
 
 ## 📸 Images  
