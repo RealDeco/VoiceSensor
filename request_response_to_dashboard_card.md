@@ -39,5 +39,4 @@ content: "# {{ states('input_text.airesponse') }}"
 grid_options:
   columns: 12
   rows: 7
-
 ```
