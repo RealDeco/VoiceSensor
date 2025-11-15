@@ -1,14 +1,21 @@
 
-Place your four images in `config/www/oknabu/` as:
+Place your 9 images of choice in `config/www/oknabu/<modelname>` as:
 
 * `idle.png`
 * `listening.png`
 * `thinking.png`
 * `replying.png`
+* `error.png`
+* `mute.png`
+* `playing.png`
+* `loading.png`
+* `timer_finished.png`
+
+example: `config/www/oknabu/Dory/idle.png`
 
 ```
 type: custom:button-card
-entity: assist_satellite.xiaozhi_taichi_pi_assist_satellite
+entity: assist_satellite.esp32s3_1_assist_satellite
 name: Ok Nabu
 show_name: false
 show_state: false
@@ -41,18 +48,34 @@ custom_fields:
   info:
     card:
       type: custom:button-card
-      entity: assist_satellite.xiaozhi_taichi_pi_assist_satellite
+      entity: sensor.esp32s3_1_voice_assistant_phase_id
       show_icon: false
       show_state: false
       show_name: false
       show_entity_picture: true
       entity_picture: |
         [[[
-          const s = states['assist_satellite.xiaozhi_taichi_pi_assist_satellite']?.state;
-          if (s === 'idle') return '/local/oknabu/idle.png';
-          if (s === 'listening') return '/local/oknabu/listening.png';
-          if (s === 'processing') return '/local/oknabu/thinking.png';
-          if (s === 'responding') return '/local/oknabu/replying.png';
+          const phase = states['sensor.esp32s3_1_voice_assistant_phase_id']?.state;
+
+          if (!phase) return '/local/oknabu/default.png';
+
+          // 1 = idle
+          if (phase === '1') return '/local/oknabu/Dory/idle.png';
+          // 2 = listening
+          if (phase === '2') return '/local/oknabu/Dory/listening.png';
+          // 3 = thinking/processing
+          if (phase === '3') return '/local/oknabu/Dory/thinking.png';
+          // 4 = replying
+          if (phase === '4') return '/local/oknabu/Dory/replying.png';
+          // 10 = not ready / initializing
+          if (phase === '10') return '/local/oknabu/Dory/loading.png';
+          // 11 = error
+          if (phase === '11') return '/local/oknabu/Dory/error.png';
+          // 12 = muted
+          if (phase === '12') return '/local/oknabu/Dory/mute.png';
+          // 20 = timer finished
+          if (phase === '20') return '/local/oknabu/Dory/timer_finished.png';
+
           return '/local/oknabu/default.png';
         ]]]
       styles:
@@ -81,5 +104,4 @@ custom_fields:
         }
 card_mod:
   class: hki
-
 ```
