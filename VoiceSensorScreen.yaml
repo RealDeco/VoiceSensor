@@ -1,0 +1,399 @@
+substitutions:
+  name: esphome-web-c89274
+  friendly_name: Voicesensor Screen
+
+  imagemodel1: "Gwen"
+  imagewidth: "480"
+  imageheight: "480"
+
+  # Device that exposes text_request / text_response and voice_assistant_phase_id
+  textdevice: "esphome_web_530014"
+
+  # Voice assistant phases (must match the other device)
+  voice_assist_idle_phase_id: "1"
+  voice_assist_listening_phase_id: "2"
+  voice_assist_thinking_phase_id: "3"
+  voice_assist_replying_phase_id: "4"
+  voice_assist_not_ready_phase_id: "10"
+  voice_assist_error_phase_id: "11"
+  voice_assist_muted_phase_id: "12"
+  voice_assist_timer_finished_phase_id: "20"
+
+  idle_illustration_file1: https://github.com/RealDeco/xiaozhi-esphome/raw/main/images/${imagemodel1}/${imagewidth}x${imageheight}/idle.png
+  listening_illustration_file1: https://github.com/RealDeco/xiaozhi-esphome/raw/main/images/${imagemodel1}/${imagewidth}x${imageheight}/listening.png
+  thinking_illustration_file1: https://github.com/RealDeco/xiaozhi-esphome/raw/main/images/${imagemodel1}/${imagewidth}x${imageheight}/thinking.png
+  replying_illustration_file1: https://github.com/RealDeco/xiaozhi-esphome/raw/main/images/${imagemodel1}/${imagewidth}x${imageheight}/replying.png
+
+  loading_illustration_file1: https://github.com/RealDeco/xiaozhi-esphome/raw/main/images/${imagemodel1}/${imagewidth}x${imageheight}/loading.png
+  error_illustration_file1: https://github.com/RealDeco/xiaozhi-esphome/raw/main/images/${imagemodel1}/${imagewidth}x${imageheight}/error.png
+  timer_finished_illustration_file1: https://github.com/RealDeco/xiaozhi-esphome/raw/main/images/${imagemodel1}/${imagewidth}x${imageheight}/timer_finished.png
+  mute_illustration_file1: https://github.com/RealDeco/xiaozhi-esphome/raw/main/images/${imagemodel1}/${imagewidth}x${imageheight}/mute.png
+  playing_illustration_file1: https://github.com/RealDeco/xiaozhi-esphome/raw/main/images/${imagemodel1}/${imagewidth}x${imageheight}/playing.png
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+  min_version: 2025.9.0
+  name_add_mac_suffix: false
+  on_boot:
+    priority: 800
+    then:
+      # Hide text areas until we actually enter a phase that uses them
+      - lvgl.widget.hide:
+          id: request_box
+      - lvgl.widget.hide:
+          id: response_box
+
+esp32:
+  board: esp32-s3-devkitc-1
+  flash_size: 16MB
+  cpu_frequency: 240MHz
+  framework:
+    type: esp-idf
+    sdkconfig_options:
+      CONFIG_ESP32S3_DEFAULT_CPU_FREQ_240: "y"
+      CONFIG_ESP32S3_DATA_CACHE_64KB: "y"
+      CONFIG_ESP32S3_DATA_CACHE_LINE_64B: "y"
+
+psram:
+  mode: octal
+  speed: 80MHz
+
+logger:
+
+api:
+
+ota:
+  - platform: esphome
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+image:
+  - file: ${idle_illustration_file1}
+    id: casita_idle
+    resize: ${imagewidth}x${imageheight}
+    type: RGB565
+  - file: ${listening_illustration_file1}
+    id: casita_listening
+    resize: ${imagewidth}x${imageheight}
+    type: RGB565
+  - file: ${thinking_illustration_file1}
+    id: casita_thinking
+    resize: ${imagewidth}x${imageheight}
+    type: RGB565
+  - file: ${replying_illustration_file1}
+    id: casita_replying
+    resize: ${imagewidth}x${imageheight}
+    type: RGB565
+
+  - file: ${error_illustration_file1}
+    id: casita_error
+    resize: ${imagewidth}x${imageheight}
+    type: RGB565
+  - file: ${timer_finished_illustration_file1}
+    id: casita_timer_finished
+    resize: ${imagewidth}x${imageheight}
+    type: RGB565
+  - file: ${loading_illustration_file1}
+    id: casita_initializing
+    resize: ${imagewidth}x${imageheight}
+    type: RGB565
+  - file: ${mute_illustration_file1}
+    id: casita_muted
+    resize: ${imagewidth}x${imageheight}
+    type: RGB565
+  - file: ${playing_illustration_file1}
+    id: casita_playing
+    resize: ${imagewidth}x${imageheight}
+    type: RGB565
+
+text_sensor:
+  # 1) Phase ID from ESPHome voice device (numeric-as-string, e.g. "1","2","3"...)
+  - platform: homeassistant
+    id: ts_phase
+    internal: true
+    entity_id: sensor.${textdevice}_voice_assistant_phase_id
+    on_value:
+      then:
+        - logger.log:
+            format: "Voice assistant phase: %s"
+            args: [ "x.c_str()" ]
+
+        # idle (1)
+        - if:
+            condition:
+              lambda: 'return x == "${voice_assist_idle_phase_id}";'
+            then:
+              - lvgl.image.update:
+                  id: assist_image
+                  src: casita_idle
+              - lvgl.widget.hide:
+                  id: request_box
+              - lvgl.widget.hide:
+                  id: response_box
+
+        # listening (2)
+        - if:
+            condition:
+              lambda: 'return x == "${voice_assist_listening_phase_id}";'
+            then:
+              - lvgl.image.update:
+                  id: assist_image
+                  src: casita_listening
+              - lvgl.widget.hide:
+                  id: request_box
+              - lvgl.widget.hide:
+                  id: response_box
+
+        # thinking / processing (3)
+        - if:
+            condition:
+              lambda: 'return x == "${voice_assist_thinking_phase_id}";'
+            then:
+              - lvgl.image.update:
+                  id: assist_image
+                  src: casita_thinking
+              - lvgl.widget.show:
+                  id: request_box
+              - lvgl.widget.hide:
+                  id: response_box
+
+        # replying (4)
+        - if:
+            condition:
+              lambda: 'return x == "${voice_assist_replying_phase_id}";'
+            then:
+              - lvgl.image.update:
+                  id: assist_image
+                  src: casita_replying
+              - lvgl.widget.show:
+                  id: response_box
+              - lvgl.widget.hide:
+                  id: request_box
+
+        # not ready / initializing (10)
+        - if:
+            condition:
+              lambda: 'return x == "${voice_assist_not_ready_phase_id}";'
+            then:
+              - lvgl.image.update:
+                  id: assist_image
+                  src: casita_initializing
+              - lvgl.widget.hide:
+                  id: request_box
+              - lvgl.widget.hide:
+                  id: response_box
+
+        # error (11)
+        - if:
+            condition:
+              lambda: 'return x == "${voice_assist_error_phase_id}";'
+            then:
+              - lvgl.image.update:
+                  id: assist_image
+                  src: casita_error
+              - lvgl.widget.hide:
+                  id: request_box
+              - lvgl.widget.hide:
+                  id: response_box
+
+        # muted (12)
+        - if:
+            condition:
+              lambda: 'return x == "${voice_assist_muted_phase_id}";'
+            then:
+              - lvgl.image.update:
+                  id: assist_image
+                  src: casita_muted
+              - lvgl.widget.hide:
+                  id: request_box
+              - lvgl.widget.hide:
+                  id: response_box
+
+        # timer finished (20)
+        - if:
+            condition:
+              lambda: 'return x == "${voice_assist_timer_finished_phase_id}";'
+            then:
+              - lvgl.image.update:
+                  id: assist_image
+                  src: casita_timer_finished
+              - lvgl.widget.hide:
+                  id: request_box
+              - lvgl.widget.hide:
+                  id: response_box
+
+  # 2) Request text from HA (only shown while "thinking")
+  - platform: homeassistant
+    id: ts_request
+    internal: true
+    entity_id: sensor.${textdevice}_text_request
+    on_value:
+      then:
+        - logger.log:
+            format: "Request text updated to: %s"
+            args: [ "x.c_str()" ]
+        - if:
+            condition:
+              lambda: |-
+                // Only update when in thinking phase and not just placeholder "..."
+                return id(ts_phase).state == "${voice_assist_thinking_phase_id}" && x != "...";
+            then:
+              - lvgl.textarea.update:
+                  id: request_box
+                  text: !lambda 'return x;'
+
+  # 3) Response text from HA (always store latest, only show when phase == replying)
+  - platform: homeassistant
+    id: ts_response
+    internal: true
+    entity_id: sensor.${textdevice}_text_response
+    on_value:
+      then:
+        - logger.log:
+            format: "Response text updated to: %s"
+            args: [ "x.c_str()" ]
+        - if:
+            condition:
+              lambda: |-
+                // Ignore placeholder "..."
+                return x != "...";
+            then:
+              - lvgl.textarea.update:
+                  id: response_box
+                  text: !lambda 'return x;'
+
+switch:
+  - platform: gpio
+    name: Relay 1
+    pin:
+      number: GPIO40
+      inverted: true
+  - platform: gpio
+    name: Relay 2
+    pin:
+      number: GPIO2
+      inverted: true
+  - platform: gpio
+    name: Relay 3
+    pin:
+      number: GPIO1
+      inverted: true
+
+output:
+  - platform: ledc
+    id: backlight_output
+    pin: GPIO38
+    frequency: 150Hz
+    min_power: 0.01
+    zero_means_zero: true
+
+light:
+  - platform: monochromatic
+    name: Backlight
+    id: display_backlight
+    output: backlight_output
+    restore_mode: ALWAYS_ON
+    default_transition_length: 1s
+
+spi:
+  - id: lcd_spi
+    clk_pin: GPIO48
+    mosi_pin: GPIO47
+
+i2c:
+  id: touchscreen_bus
+  sda: GPIO19
+  scl:
+    number: 45
+    ignore_strapping_warning: true
+
+display:
+  - platform: st7701s
+    id: tft_display
+    dimensions:
+      width: 480
+      height: 480
+    # rotation: 270    #uncomment for placement with down-facing USB socket
+    spi_mode: MODE3
+    data_rate: 2MHz
+    color_order: RGB
+    invert_colors: False
+    cs_pin: 39
+    de_pin: 18
+    hsync_pin: 16
+    vsync_pin: 17
+    pclk_pin: 21
+    pclk_frequency: 12MHz
+    pclk_inverted: False
+    hsync_pulse_width: 8
+    hsync_front_porch: 10
+    hsync_back_porch: 20
+    vsync_pulse_width: 8
+    vsync_front_porch: 10
+    vsync_back_porch: 10
+    update_interval: never
+    auto_clear_enabled: False
+    init_sequence:
+      - 1
+      - [0xFF, 0x77, 0x01, 0x00, 0x00, 0x10] # CMD2_BKSEL_BK0
+      - [0xCD, 0x00] # disable MDT flag
+    data_pins:
+      red: [11, 12, 13, 14, 0]
+      green: [8, 20, 3, 46, 9, 10]
+      blue: [4, 5, 6, 7, 15]
+
+touchscreen:
+  - platform: gt911
+    id: tft_touch
+    display: tft_display
+#    transform:     #uncomment for placement with down-facing USB socket
+#      swap_xy: true
+#      mirror_x: true
+    on_touch:
+      then:
+        - binary_sensor.template.publish:
+            id: touch_input
+            state: ON
+    on_release:
+      then:
+        - binary_sensor.template.publish:
+            id: touch_input
+            state: OFF
+        - homeassistant.action:
+            action: button.press
+            data:
+              entity_id: button.${textdevice}_virtual_touch
+
+binary_sensor:
+  - platform: template
+    name: "Touch Button"
+    id: touch_input
+
+lvgl:
+  disp_bg_color: black
+  widgets:
+    - image:
+        id: assist_image
+        align: CENTER
+        src: casita_idle   # default on boot
+
+    # Text box for the request text (shown when thinking)
+    - textarea:
+        id: request_box
+        text: ""
+        align: BOTTOM_MID
+        width: 440
+        height: 140
+        one_line: false
+
+    # Text box for the response text (shown when replying)
+    - textarea:
+        id: response_box
+        text: ""
+        align: BOTTOM_MID
+        width: 440
+        height: 140
+        one_line: false
