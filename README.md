@@ -65,14 +65,14 @@ The new recommended version.
 
 ### **`CustomButton.md`**
 
-* Display the phases on your Dashboard
+* Display the phase id images on your Dashboard
 
 ---
 
 ### **`request_response_to_dashboard_automation.yaml`** and
 ### **`request_response_to_dashboard_card.md`**
 
-* show text on dashboard
+* show request and response text on dashboard
 
 ---
 
