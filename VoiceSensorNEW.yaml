@@ -3,12 +3,14 @@ substitutions:
   friendly_name: VoiceSensor
 
   voice_assist_idle_phase_id: "1"
-  voice_assist_listening_phase_id: "2"
-  voice_assist_thinking_phase_id: "3"
-  voice_assist_replying_phase_id: "4"
+  voice_assist_waiting_for_command_phase_id: "2"
+  voice_assist_listening_phase_id: "3"
+  voice_assist_thinking_phase_id: "4"
+  voice_assist_replying_phase_id: "5"
   voice_assist_not_ready_phase_id: "10"
   voice_assist_error_phase_id: "11"
   voice_assist_muted_phase_id: "12"
+  voice_assist_playing_phase_id: "13"
   voice_assist_timer_finished_phase_id: "20"
 
 esphome:
@@ -388,6 +390,9 @@ voice_assistant:
   auto_gain: 31dBFS
   volume_multiplier: 2.0
   on_listening:
+    - script.execute:
+        id: set_phase
+        phase: ${voice_assist_waiting_for_command_phase_id}
     - if:
         condition:
           - switch.is_on: use_listen_light
@@ -398,15 +403,16 @@ voice_assistant:
               red: 0%
               green: 0%
               effect: "Slow Pulse"
-    - script.execute:
-        id: set_phase
-        phase: ${voice_assist_listening_phase_id}
     - text_sensor.template.publish:
         id: text_request
         state: "..."
     - text_sensor.template.publish:
         id: text_response
         state: "..."
+  on_stt_vad_start:
+    - script.execute:
+        id: set_phase
+        phase: ${voice_assist_listening_phase_id}
   on_stt_vad_end:
     - if:
         condition:
