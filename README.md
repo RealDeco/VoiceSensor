@@ -7,28 +7,6 @@ A compact 3-in-1 device combining a Voice Assistant, Presence Sensor, and Ambien
 
 — or an “Ear-Only” setup without additional sensors using other devices for display and audio.
 
----
-
-## 📄 Versions
-
-### **`VoiceSensorOLD.yaml` (SuperMini)**
-
-An older project from a couple of years back.
-
-* Very simple YAML, but *still works amazingly well*.
-* **No MicroWakeWord** (SuperMini has no PSRAM).
-* **No timer functionality** included in the code.
-
----
-
-### **`VoiceSensor.yaml` (ESP32-S3 Zero)**
-
-The new recommended version.
-
-* Works **only** with **ESP32-S3 Zero** (not SuperMini).
-* Zero includes **2MB PSRAM**, required for on-device MicroWakeWord.
-* Supports **up to 2 wake words**, processed locally.
-* For outputting responses to an external media player, see: **[tts_uri.md](tts_uri.md)**.
 
 ---
 
@@ -53,6 +31,62 @@ The new recommended version.
   <img src="https://github.com/user-attachments/assets/7a953ff4-168c-42d4-afb0-72a4bac22e5e" width="45%" />
 </p>
 
+---
+
+## 📄 Files
+
+### **`VoiceSensorOLD.yaml` (SuperMini)**
+
+An older project from a couple of years back.
+
+* Very simple YAML, but *still works amazingly well*.
+* **No MicroWakeWord** (supports SuperMini that has no PSRAM).
+* **No timer functionality** included in the code.
+
+---
+
+### **`VoiceSensorNEW.yaml` (ESP32-S3 Zero)**
+
+The new recommended version.
+
+* Works **only** with **ESP32-S3 Zero** (not SuperMini).
+* Zero includes **2MB PSRAM**, required for on-device MicroWakeWord.
+* Supports **up to 2 wake words**, processed locally.
+* For outputting responses to an external media player, see: **[tts_uri.md](tts_uri.md)**
+
+---
+
+### **`VoiceSensorScreen.yaml` (Guition 4" 4848S040 with no mic)**
+
+* Simple yaml that reads the phase id's from HA and display images accordingly
+* Can also control the "virtual touch" of the voicesensor by touching the display.
+
+---
+
+### **`CustomButton.md`**
+
+* Display the phases on your Dashboard
+
+---
+
+### **`request_response_to_dashboard_automation.yaml`** and
+### **`request_response_to_dashboard_card.md`**
+
+* show text on dashboard
+
+---
+
+### **`tts_uri.md`**
+
+* How to pass audio to another mediaplayer.
+
+---
+
+### **`multisensorcase.3mf`**
+
+* 3D file for VoiceSensor Case
+* 
+---
 
 ## 🛠️ Parts List
 
