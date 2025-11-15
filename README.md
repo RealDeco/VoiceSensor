@@ -45,7 +45,10 @@ The new recommended version.
   <img src="https://github.com/user-attachments/assets/7a953ff4-168c-42d4-afb0-72a4bac22e5e" width="45%" />
 </p>
 
----
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/c0871b54-cf89-4bdd-9b51-5e7f91af2e9b" width="45%" />
+</p>
+
 
 ## 🛠️ Parts List
 
