@@ -1,0 +1,56 @@
+## remember to create a text helper called airesponse
+alias: request_response_to_dashboard
+description: ""
+triggers:
+  - trigger: state
+    id: request
+    entity_id: sensor.esphome_web_530014_text_request
+  - trigger: state
+    id: response
+    entity_id: sensor.esphome_web_530014_text_response
+  - trigger: state
+    entity_id:
+      - assist_satellite.miniva_assist_satellite
+    to:
+      - idle
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 5
+    id: clear
+conditions: []
+actions:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: request
+          - condition: template
+            value_template: "{{ trigger.to_state.state != '...' }}"
+        sequence:
+          - action: input_text.set_value
+            target:
+              entity_id: input_text.airesponse
+            data:
+              value: "{{ 'You: ' ~ trigger.to_state.state }}"
+      - conditions:
+          - condition: trigger
+            id: response
+          - condition: template
+            value_template: "{{ trigger.to_state.state != '...' }}"
+        sequence:
+          - action: input_text.set_value
+            target:
+              entity_id: input_text.airesponse
+            data:
+              value: "{{ 'AI: ' ~ trigger.to_state.state }}"
+      - conditions:
+          - condition: trigger
+            id:
+              - clear
+        sequence:
+          - action: input_text.set_value
+            target:
+              entity_id: input_text.airesponse
+            data:
+              value: "{{ '....'}}"
+mode: single
