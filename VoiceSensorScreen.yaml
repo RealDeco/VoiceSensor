@@ -21,7 +21,8 @@ substitutions:
   voice_assist_playing_phase_id: "13"
   voice_assist_timer_finished_phase_id: "20"
 
-  idle_illustration_file1: https://github.com/RealDeco/xiaozhi-esphome/raw/main/images/${imagemodel1}/${imagewidth}x${imageheight}/idle.png
+  idle_illustration_file1: https://github.com/RealDeco/xiaozhi-esphome/raw/main/images/Other/${imagewidth}x${imageheight}/tron.png
+  waiting_illustration_file1: https://github.com/RealDeco/xiaozhi-esphome/raw/main/images/${imagemodel1}/${imagewidth}x${imageheight}/idle.png
   listening_illustration_file1: https://github.com/RealDeco/xiaozhi-esphome/raw/main/images/${imagemodel1}/${imagewidth}x${imageheight}/listening.png
   thinking_illustration_file1: https://github.com/RealDeco/xiaozhi-esphome/raw/main/images/${imagemodel1}/${imagewidth}x${imageheight}/thinking.png
   replying_illustration_file1: https://github.com/RealDeco/xiaozhi-esphome/raw/main/images/${imagemodel1}/${imagewidth}x${imageheight}/replying.png
@@ -75,6 +76,10 @@ wifi:
 image:
   - file: ${idle_illustration_file1}
     id: casita_idle
+    resize: ${imagewidth}x${imageheight}
+    type: RGB565
+  - file: ${waiting_illustration_file1}
+    id: casita_waiting
     resize: ${imagewidth}x${imageheight}
     type: RGB565
   - file: ${listening_illustration_file1}
@@ -139,11 +144,11 @@ text_sensor:
         # waiting for command (2)
         - if:
             condition:
-              lambda: 'return x == "${voice_assist_waiting_for_command_phase_id";'
+              lambda: 'return x == "${voice_assist_waiting_for_command_phase_id}";'
             then:
               - lvgl.image.update:
                   id: assist_image
-                  src: casita_listening
+                  src: casita_waiting
               - lvgl.widget.hide:
                   id: request_box
               - lvgl.widget.hide:
