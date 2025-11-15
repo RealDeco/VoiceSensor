@@ -1,5 +1,5 @@
 
-# 🎙️ VoiceSensor
+# 🎙️ VoiceSensor & VoiceEar
 
 why should a voice assistant device be 1 device when it could be 3? or why should sensors be 3 devices when they could be 1?
 
@@ -14,7 +14,7 @@ A compact 3-in-1 device combining a Voice Assistant, Presence Sensor, and Ambien
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/06bbc9ff-7d2f-4aa9-9395-547f1c3b3554" width="45%" />
-  <img src="https://github.com/user-attachments/assets/fc48c042-4793-42a2-abfb-77fd1b28759b" width="45%" />
+  <img src="https://github.com/user-attachments/assets/c0871b54-cf89-4bdd-9b51-5e7f91af2e9b" width="45%" />
 </p>
 
 <p align="center">
@@ -24,7 +24,7 @@ A compact 3-in-1 device combining a Voice Assistant, Presence Sensor, and Ambien
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/f8d948ec-b0d3-48a9-a342-1229470f3cdc" width="45%" />
-  <img src="https://github.com/user-attachments/assets/c0871b54-cf89-4bdd-9b51-5e7f91af2e9b" width="45%" />
+  <img src="https://github.com/user-attachments/assets/fc48c042-4793-42a2-abfb-77fd1b28759b" width="45%" />
 </p>
 
 <p align="center">
