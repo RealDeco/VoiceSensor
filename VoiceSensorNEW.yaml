@@ -215,6 +215,7 @@ binary_sensor:
           - ON for at least 50ms
           - OFF for at least 50ms
         then:
+          - script.execute: reset_led
           - if:
               condition:
                 switch.is_on: timer_ringing
@@ -226,9 +227,10 @@ binary_sensor:
                       not:
                         voice_assistant.is_running:
                     then:
-                      - voice_assistant.start:                     
+                      - voice_assistant.start:
                     else:
-                      - voice_assistant.stop:                     
+                      - voice_assistant.stop:
+
       - timing:
           - ON for at least 10s
         then:
@@ -468,13 +470,13 @@ voice_assistant:
           - micro_wake_word.start:
     - script.execute: set_idle_or_mute_phase
     # Clear text sensors
-    - text_sensor.template.publish:
-        id: text_request
-        state: ""
-    - text_sensor.template.publish:
-        id: text_response
-        state: ""
-    - script.execute: reset_led
+#    - text_sensor.template.publish:
+#        id: text_request
+#        state: ""
+#    - text_sensor.template.publish:
+#        id: text_response
+#        state: ""
+#    - script.execute: reset_led
 
   on_error:
     - if:
@@ -531,7 +533,16 @@ voice_assistant:
     - script.execute:
         id: set_phase
         phase: ${voice_assist_timer_finished_phase_id}
-    - light.turn_off: led
+    - if:
+        condition:
+          - switch.is_on: use_listen_light
+        then:
+          - light.turn_on:
+              id: led
+              blue: 0%
+              red: 100%
+              green: 0%
+              effect: "Fast Pulse"
 
 script:
   - id: reset_led
@@ -839,9 +850,9 @@ text_sensor:
     name: "Text Request"
     on_value:
       lambda: |-
-        if(id(text_request).state.length()>250) {
+        if(id(text_request).state.length()>245) {
           std::string name = id(text_request).state.c_str();
-          std::string truncated = esphome::str_truncate(name.c_str(),250);
+          std::string truncated = esphome::str_truncate(name.c_str(),245);
           id(text_request).state = (truncated+" ...").c_str();
         }
 
@@ -850,9 +861,9 @@ text_sensor:
     name: "Text Response"
     on_value:
       lambda: |-
-        if(id(text_response).state.length()>250) {
+        if(id(text_response).state.length()>245) {
           std::string name = id(text_response).state.c_str();
-          std::string truncated = esphome::str_truncate(name.c_str(),250);
+          std::string truncated = esphome::str_truncate(name.c_str(),245);
           id(text_response).state = (truncated+" ...").c_str();
         }
 
