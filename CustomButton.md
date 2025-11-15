@@ -11,6 +11,8 @@ Place your 9 images of choice in `config/www/oknabu/<modelname>` as:
 * `loading.png`
 * `timer_finished.png`
 
+Place 1 image in `config/www/oknabu/Other` as: tron-1.png (standby image)
+
 example: `config/www/oknabu/Dory/idle.png`
 
 ```
@@ -60,9 +62,9 @@ custom_fields:
           if (!phase) return '/local/oknabu/default.png';
 
           // 1 = idle
-          if (phase === '1') return '/local/oknabu/Gwen/idle.png';
+          if (phase === '1') return '/local/oknabu/Other/tron-1.png';
           // 2 = waiting for command
-          if (phase === '2') return '/local/oknabu/Gwen/listening.png';
+          if (phase === '2') return '/local/oknabu/Gwen/idle.png';
           // 3 = listening
           if (phase === '3') return '/local/oknabu/Gwen/listening.png';
           // 4 = thinking/processing
