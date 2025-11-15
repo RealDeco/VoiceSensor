@@ -33,9 +33,10 @@ This version uses on-device microwakeword (max 2.)
 ## 🛠️ Parts List  
 
 - **1x ESP32-S3 Zero**  
+- **1x INMP441 microphone
 - **1x LD2410C Presence Sensor**  
 - **1x BH1750 Light Sensor**  
-- **1x 16mm Push Button**  
+- **1x 16mm Push Button** (connected to gpio10)
 
 ---
 
