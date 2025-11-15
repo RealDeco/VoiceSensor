@@ -192,6 +192,12 @@ button:
     id: factory_reset_btn
     internal: true
 
+  - platform: template
+    name: "Virtual Touch"
+    id: virtual_touch
+    on_press:
+      - script.execute: handle_screen_tap
+
 binary_sensor:
   - platform: ld2410
     has_target:
@@ -707,6 +713,27 @@ script:
             char buf[8];
             snprintf(buf, sizeof(buf), "%d", phase);
             return std::string(buf);
+
+  - id: handle_screen_tap
+    then:
+      - if:
+          condition:
+            switch.is_on: timer_ringing
+          then:
+            - switch.turn_off: timer_ringing
+          else:
+            - if:
+                condition:
+                  lambda: return id(wake_word_engine_location).state == "On device";
+                then:
+                  - if:
+                      condition:
+                        not:
+                          voice_assistant.is_running:
+                      then:
+                        - voice_assistant.start:
+                      else:
+                        - voice_assistant.stop:
 
 switch:
   - platform: template
