@@ -1,7 +1,11 @@
 
 # 🎙️ VoiceSensor
 
-**A compact 3-in-1 device combining a Voice Assistant, Presence Sensor, and Ambient Light Sensor for Home Assistant — or an “Ear-Only” setup without additional sensors.**
+why should a voice assistant device be 1 device when it could be 3? or why should sensors be 3 devices when they could be 1?
+
+A compact 3-in-1 device combining a Voice Assistant, Presence Sensor, and Ambient Light Sensor for Home Assistant
+
+— or an “Ear-Only” setup without additional sensors using other devices for display and audio.
 
 ---
 
