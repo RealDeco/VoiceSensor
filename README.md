@@ -1,17 +1,34 @@
 
-# 🎙️ VoiceSensor  
+# 🎙️ VoiceSensor
 
-**3-in-1 Voice Assistant, Presence Sensor, and Light Sensor for Home Assistant**  
+**A compact 3-in-1 device combining a Voice Assistant, Presence Sensor, and Ambient Light Sensor for Home Assistant — or an “Ear-Only” setup without additional sensors.**
 
-This is a couople of years old project of mine, yaml is old and very basic but amazingly still works :)
-there's no microwakeword since the supermini doesn't have psram and no timer function in code.
-
-NEW: the VoiceSensorNEW.yaml only works with esp32-s3 zero (not supermini) because the zero has 2mb psram, supermini doesn't.
-To have response output from the NEW version on external mediaplayer see [here](tts_uri.md),
-This version uses on-device microwakeword (max 2.)
 ---
 
-## 📸 Images  
+## 📄 Versions
+
+### **`VoiceSensorOLD.yaml` (SuperMini)**
+
+An older project from a couple of years back.
+
+* Very simple YAML, but *still works amazingly well*.
+* **No MicroWakeWord** (SuperMini has no PSRAM).
+* **No timer functionality** included in the code.
+
+---
+
+### **`VoiceSensor.yaml` (ESP32-S3 Zero)**
+
+The new recommended version.
+
+* Works **only** with **ESP32-S3 Zero** (not SuperMini).
+* Zero includes **2MB PSRAM**, required for on-device MicroWakeWord.
+* Supports **up to 2 wake words**, processed locally.
+* For outputting responses to an external media player, see: **[tts_uri.md](tts_uri.md)**.
+
+---
+
+## 📸 Images
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/06bbc9ff-7d2f-4aa9-9395-547f1c3b3554" width="45%" />
@@ -30,31 +47,49 @@ This version uses on-device microwakeword (max 2.)
 
 ---
 
-## 🛠️ Parts List  
+## 🛠️ Parts List
 
-- **1x ESP32-S3 Zero**  
-- **1x INMP441 microphone** 
-- **1x LD2410C Presence Sensor**  
-- **1x BH1750 Light Sensor**  
-- **1x 16mm Push Button** (connected to gpio10)
+### **VoiceSensor Setup (Full Device)**
 
----
+* **ESP32-S3 Zero**
+* **INMP441 microphone**
+* **LD2410C presence sensor**
+* **BH1750 ambient light sensor**
+* **16mm push button** (GPIO 10)
 
-## 📦 Assembly Notes  
+### **Ear-Only Setup (No Sensors)**
 
-- Fits inside a custom case with test pins.  
-- Designed for **minimal soldering** — only required if:  
-  - Power splitters need to be made.  
-  - Pins on the board come unsoldered.  
+* **ESP32-S3 Zero**
+* **INMP441 microphone**
 
 ---
 
-## ✨ Features  
+## 📦 Assembly Notes
 
-- 🗣️ **Voice Assistant** — ESP32-S3 with onboard LED for phase indication  
-- 👤 **Presence Detection** — LD2410C radar sensor for presence detecting  
-- 💡 **Ambient Light Measurement** — BH1750 sensor for light level detecting  
-- 🔘 **User Input** — button for manual control  
-- 🧪 **Prototype-Friendly** — can be tested on a breadboard before boxing it  
+* Designed to fit inside a custom enclosure with accessible test pins.
+* **Minimal soldering required**, unless:
+
+  * You need custom power splitters.
+  * Pin headers arrive loose or unsoldered.
 
 ---
+
+## ✨ Features
+
+* 🗣️ **Local Voice Assistant**
+  On-device processing with LED phase feedback.
+
+* 👤 **Presence Detection**
+  LD2410C millimeter-wave radar sensor.
+
+* 💡 **Light Level Monitoring**
+  BH1750 digital luminance sensor.
+
+* 🔘 **Push Button Input**
+  For triggering actions manually.
+
+* 🔧 **Maker-Friendly**
+  Fully testable on a breadboard before final assembly.
+
+---
+
