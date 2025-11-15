@@ -716,6 +716,7 @@ script:
 
   - id: handle_screen_tap
     then:
+      - script.execute: reset_led
       - if:
           condition:
             switch.is_on: timer_ringing
