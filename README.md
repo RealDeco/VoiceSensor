@@ -41,7 +41,7 @@ The new recommended version.
 </p>
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/094d0237-6862-4682-ab70-27baab721618" width="45%" />
+  <img src="https://github.com/user-attachments/assets/028c3ded-2083-4b4f-95eb-0bed74ca007e" />
   <img src="https://github.com/user-attachments/assets/7a953ff4-168c-42d4-afb0-72a4bac22e5e" width="45%" />
 </p>
 
