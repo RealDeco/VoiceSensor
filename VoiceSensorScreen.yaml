@@ -1,7 +1,15 @@
 substitutions:
-  name: esphome-web-530014
-  friendly_name: VoiceSensor
+  name: esphome-web-c89274
+  friendly_name: Voicesensor Screen
 
+  imagemodel1: "Gwen"
+  imagewidth: "480"
+  imageheight: "480"
+
+  # Device that exposes text_request / text_response and voice_assistant_phase_id
+  textdevice: "esphome_web_530014"
+
+  # Voice assistant phases (must match the other device)
   voice_assist_idle_phase_id: "1"
   voice_assist_waiting_for_command_phase_id: "2"
   voice_assist_listening_phase_id: "3"
@@ -13,30 +21,44 @@ substitutions:
   voice_assist_playing_phase_id: "13"
   voice_assist_timer_finished_phase_id: "20"
 
+  idle_illustration_file1: https://github.com/RealDeco/xiaozhi-esphome/raw/main/images/${imagemodel1}/${imagewidth}x${imageheight}/idle.png
+  listening_illustration_file1: https://github.com/RealDeco/xiaozhi-esphome/raw/main/images/${imagemodel1}/${imagewidth}x${imageheight}/listening.png
+  thinking_illustration_file1: https://github.com/RealDeco/xiaozhi-esphome/raw/main/images/${imagemodel1}/${imagewidth}x${imageheight}/thinking.png
+  replying_illustration_file1: https://github.com/RealDeco/xiaozhi-esphome/raw/main/images/${imagemodel1}/${imagewidth}x${imageheight}/replying.png
+
+  loading_illustration_file1: https://github.com/RealDeco/xiaozhi-esphome/raw/main/images/${imagemodel1}/${imagewidth}x${imageheight}/loading.png
+  error_illustration_file1: https://github.com/RealDeco/xiaozhi-esphome/raw/main/images/${imagemodel1}/${imagewidth}x${imageheight}/error.png
+  timer_finished_illustration_file1: https://github.com/RealDeco/xiaozhi-esphome/raw/main/images/${imagemodel1}/${imagewidth}x${imageheight}/timer_finished.png
+  mute_illustration_file1: https://github.com/RealDeco/xiaozhi-esphome/raw/main/images/${imagemodel1}/${imagewidth}x${imageheight}/mute.png
+  playing_illustration_file1: https://github.com/RealDeco/xiaozhi-esphome/raw/main/images/${imagemodel1}/${imagewidth}x${imageheight}/playing.png
+
 esphome:
   name: ${name}
   friendly_name: ${friendly_name}
   min_version: 2025.9.0
   name_add_mac_suffix: false
   on_boot:
-    priority: 600
+    priority: 800
     then:
-      - if:
-          condition:
-            lambda: return id(init_in_progress);
-          then:
-            - lambda: id(init_in_progress) = false;
-      - script.execute:
-          id: set_phase
-          phase: ${voice_assist_not_ready_phase_id}
+      # Hide text areas until we actually enter a phase that uses them
+      - lvgl.widget.hide:
+          id: request_box
+      - lvgl.widget.hide:
+          id: response_box
 
 esp32:
   board: esp32-s3-devkitc-1
+  flash_size: 16MB
+  cpu_frequency: 240MHz
   framework:
     type: esp-idf
+    sdkconfig_options:
+      CONFIG_ESP32S3_DEFAULT_CPU_FREQ_240: "y"
+      CONFIG_ESP32S3_DATA_CACHE_64KB: "y"
+      CONFIG_ESP32S3_DATA_CACHE_LINE_64B: "y"
 
 psram:
-  mode: quad
+  mode: octal
   speed: 80MHz
 
 logger:
@@ -44,864 +66,362 @@ logger:
 api:
 
 ota:
-- platform: esphome
+  - platform: esphome
 
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
 
-captive_portal:
+image:
+  - file: ${idle_illustration_file1}
+    id: casita_idle
+    resize: ${imagewidth}x${imageheight}
+    type: RGB565
+  - file: ${listening_illustration_file1}
+    id: casita_listening
+    resize: ${imagewidth}x${imageheight}
+    type: RGB565
+  - file: ${thinking_illustration_file1}
+    id: casita_thinking
+    resize: ${imagewidth}x${imageheight}
+    type: RGB565
+  - file: ${replying_illustration_file1}
+    id: casita_replying
+    resize: ${imagewidth}x${imageheight}
+    type: RGB565
 
-i2c:
-  sda: GPIO7
-  scl: GPIO8
-  scan: true
-  id: bus_a
-
-uart:
-  id: uart_modbus
-  tx_pin: 1
-  rx_pin: 2
-  baud_rate: 256000
-  parity: NONE
-  stop_bits: 1
-
-ld2410:
-
-sensor:
-  - platform: bh1750
-    name: "BH1750 Illuminance"
-    address: 0x23
-    update_interval: 1s
-
-  - platform: ld2410
-    light:
-      name: light
-    moving_distance:
-      name : Moving Distance
-    still_distance:
-      name: Still Distance
-    moving_energy:
-      name: Move Energy
-    still_energy:
-      name: Still Energy
-    detection_distance:
-      name: Detection Distance
-    g0:
-      move_energy:
-        name: g0 move energy
-      still_energy:
-        name: g0 still energy
-    g1:
-      move_energy:
-        name: g1 move energy
-      still_energy:
-        name: g1 still energy
-    g2:
-      move_energy:
-        name: g2 move energy
-      still_energy:
-        name: g2 still energy
-    g3:
-      move_energy:
-        name: g3 move energy
-      still_energy:
-        name: g3 still energy
-    g4:
-      move_energy:
-        name: g4 move energy
-      still_energy:
-        name: g4 still energy
-    g5:
-      move_energy:
-        name: g5 move energy
-      still_energy:
-        name: g5 still energy
-    g6:
-      move_energy:
-        name: g6 move energy
-      still_energy:
-        name: g6 still energy
-    g7:
-      move_energy:
-        name: g7 move energy
-      still_energy:
-        name: g7 still energy
-    g8:
-      move_energy:
-        name: g8 move energy
-      still_energy:
-        name: g8 still energy
-
-number:
-  - platform: ld2410
-    timeout:
-      name: timeout
-    light_threshold:
-      name: light threshold
-    max_move_distance_gate:
-      name: max move distance gate
-    max_still_distance_gate:
-      name: max still distance gate
-    g0:
-      move_threshold:
-        name: g0 move threshold
-      still_threshold:
-        name: g0 still threshold
-    g1:
-      move_threshold:
-        name: g1 move threshold
-      still_threshold:
-        name: g1 still threshold
-    g2:
-      move_threshold:
-        name: g2 move threshold
-      still_threshold:
-        name: g2 still threshold
-    g3:
-      move_threshold:
-        name: g3 move threshold
-      still_threshold:
-        name: g3 still threshold
-    g4:
-      move_threshold:
-        name: g4 move threshold
-      still_threshold:
-        name: g4 still threshold
-    g5:
-      move_threshold:
-        name: g5 move threshold
-      still_threshold:
-        name: g5 still threshold
-    g6:
-      move_threshold:
-        name: g6 move threshold
-      still_threshold:
-        name: g6 still threshold
-    g7:
-      move_threshold:
-        name: g7 move threshold
-      still_threshold:
-        name: g7 still threshold
-    g8:
-      move_threshold:
-        name: g8 move threshold
-      still_threshold:
-        name: g8 still threshold
-
-button:
-  - platform: factory_reset
-    id: factory_reset_btn
-    internal: true
-
-  - platform: template
-    name: "Virtual Touch"
-    id: virtual_touch
-    on_press:
-      - script.execute: handle_screen_tap
-
-binary_sensor:
-  - platform: ld2410
-    has_target:
-      name: Presence
-    has_moving_target:
-      name: Moving Target
-    has_still_target:
-      name: Still Target
-    out_pin_presence_status:
-      name: out pin presence status
-
-  - platform: gpio
-    pin:
-      number: GPIO0
-      mode: INPUT_PULLUP
-      inverted: true
-    id: left_top_button
-    internal: true
-    on_multi_click:
-      - timing:
-          - ON for at least 50ms
-          - OFF for at least 50ms
-        then:
-          - script.execute: reset_led
-          - if:
-              condition:
-                switch.is_on: timer_ringing
-              then:
-                - switch.turn_off: timer_ringing
-              else:
-                - if:
-                    condition:
-                      not:
-                        voice_assistant.is_running:
-                    then:
-                      - voice_assistant.start:
-                    else:
-                      - voice_assistant.stop:
-
-      - timing:
-          - ON for at least 10s
-        then:
-          - button.press: factory_reset_btn
-
-  - platform: template
-    name: "Timer Ringing Active"
-    id: timer_ringing_active
-    device_class: sound
-    lambda: |-
-      return id(timer_ringing).state;
-
-light:
-  - platform: esp32_rmt_led_strip
-    id: led
-    name: LED
-    disabled_by_default: false
-    entity_category: config
-    pin: GPIO21
-    default_transition_length: 0s
-    chipset: WS2812
-    num_leds: 1
-    rgb_order: grb
-    effects:
-      - pulse:
-          name: "Slow Pulse"
-          transition_length: 250ms
-          update_interval: 250ms
-          min_brightness: 50%
-          max_brightness: 100%
-      - pulse:
-          name: "Fast Pulse"
-          transition_length: 100ms
-          update_interval: 100ms
-          min_brightness: 50%
-          max_brightness: 100%
-
-i2s_audio:
-  - id: i2s_mic # For microphone
-    i2s_lrclk_pin: GPIO4 #WS 
-    i2s_bclk_pin: GPIO5  #SCK
-  - id: i2s_audio_bus # For speaker
-    i2s_lrclk_pin: GPIO16
-    i2s_bclk_pin: GPIO15
-
-microphone:
-  - platform: i2s_audio
-    i2s_audio_id: i2s_mic
-    adc_type: external
-    i2s_din_pin: GPIO6 #SD
-    id: box_mic
-    channel: left
-    pdm: false
-    bits_per_sample: 16bit
-
-speaker:
-  - platform: i2s_audio
-    id: box_speaker
-    i2s_audio_id: i2s_audio_bus
-    dac_type: external
-    i2s_dout_pin:   
-      number: 9 # DIN Pin of the MAX98357A Audio Amplifier
-    channel: stereo
-    buffer_duration: 1000ms
-
-media_player:
-  - platform: speaker
-    name: None
-    id: speaker_media_player
-    volume_min: 0.5
-    volume_max: 0.8
-    announcement_pipeline:
-      speaker: box_speaker
-      format: FLAC
-      sample_rate: 48000
-      num_channels: 1
-    files:
-      - id: timer_finished_sound
-        file: https://github.com/esphome/home-assistant-voice-pe/raw/dev/sounds/timer_finished.flac
-    on_announcement:
-      - if:
-          condition:
-            - switch.is_on: use_listen_light
-          then:
-            - light.turn_on:
-                id: led
-                blue: 100%
-                red: 0%
-                green: 0%
-                brightness: 100%
-                effect: none
-      - if:
-          condition:
-            - microphone.is_capturing:
-          then:
-            - script.execute: stop_wake_word
-            - if:
-                condition:
-                  - lambda: return id(wake_word_engine_location).state == "In Home Assistant";
-                then:
-                  - wait_until:
-                      - not:
-                          voice_assistant.is_running:
-      - if:
-          condition:
-            not:
-              voice_assistant.is_running:
-          then:
-            - script.execute:
-                id: set_phase
-                phase: ${voice_assist_muted_phase_id}
-
-    on_idle:
-      - script.execute: reset_led
-      - if:
-          condition:
-            not:
-              voice_assistant.is_running:
-          then:
-            - script.execute: start_wake_word
-            - script.execute: set_idle_or_mute_phase
-
-micro_wake_word:
-  id: mww
-  models:
-#    - okay_nabu
-    - hey_jarvis
-#    - alexa
-#    - hey_mycroft
-    - model: https://raw.githubusercontent.com/RealDeco/xiaozhi-esphome/refs/heads/main/MicroWakeWords/models/v2/hey_sarah.json
-#    - model: https://raw.githubusercontent.com/JohnnyPrimus/Custom_V2_MicroWakeWords/refs/heads/main/models/computer/computer.json
-#    - model: https://raw.githubusercontent.com/JohnnyPrimus/Custom_V2_MicroWakeWords/refs/heads/main/models/hey_friday/hey_friday.json
-    - model: https://github.com/kahrendt/microWakeWord/releases/download/okay_nabu_20241226.3/okay_nabu.json
-#    - model: https://raw.githubusercontent.com/formatBCE/Respeaker-Lite-ESPHome-integration/refs/heads/main/microwakeword/models/v2/kenobi.json
-#    - model: https://raw.githubusercontent.com/esphome/micro-wake-word-models/refs/heads/main/models/v2/experiments/choo_choo_homie.json
-#    - model: https://raw.githubusercontent.com/esphome/micro-wake-word-models/refs/heads/main/models/v2/experiments/hey_home_assistant.json
-#    - model: https://raw.githubusercontent.com/esphome/micro-wake-word-models/refs/heads/main/models/v2/experiments/hey_peppa_pig.json
-#    - model: https://raw.githubusercontent.com/esphome/micro-wake-word-models/refs/heads/main/models/v2/experiments/okay_computer.json
-  on_wake_word_detected:
-    - voice_assistant.start:
-        wake_word: !lambda return wake_word;
-
-voice_assistant:
-  id: va
-  microphone: box_mic
-  media_player: speaker_media_player
-  micro_wake_word: mww
-  noise_suppression_level: 2
-  auto_gain: 31dBFS
-  volume_multiplier: 2.0
-  on_listening:
-    - script.execute:
-        id: set_phase
-        phase: ${voice_assist_waiting_for_command_phase_id}
-    - if:
-        condition:
-          - switch.is_on: use_listen_light
-        then:
-          - light.turn_on:
-              id: led
-              blue: 100%
-              red: 0%
-              green: 0%
-              effect: "Slow Pulse"
-    - text_sensor.template.publish:
-        id: text_request
-        state: "..."
-    - text_sensor.template.publish:
-        id: text_response
-        state: "..."
-  on_stt_vad_start:
-    - script.execute:
-        id: set_phase
-        phase: ${voice_assist_listening_phase_id}
-  on_stt_vad_end:
-    - if:
-        condition:
-          - switch.is_on: use_listen_light
-        then:
-          - light.turn_on:
-              id: led
-              blue: 100%
-              red: 0%
-              green: 0%
-              effect: "Fast Pulse"
-    - script.execute:
-        id: set_phase
-        phase: ${voice_assist_thinking_phase_id}
-
-  on_stt_end:
-    - script.execute:
-        id: send_stt_text_event
-        stt_text: !lambda 'return x;'
-    - text_sensor.template.publish:
-        id: text_request
-        state: !lambda return x;
-  on_tts_start:
-    - script.execute:
-        id: send_tts_text_event
-        tts_text: !lambda 'return x;'
-    - if:
-        condition:
-          - switch.is_on: use_listen_light
-        then:
-          - light.turn_on:
-              id: led
-              blue: 100%
-              red: 0%
-              green: 0%
-              brightness: 100%
-              effect: none
-    - text_sensor.template.publish:
-        id: text_response
-        state: !lambda return x;
-    - script.execute:
-        id: set_phase
-        phase: ${voice_assist_replying_phase_id}
-  on_tts_end:
-    - script.execute:
-        id: send_tts_uri_event
-        tts_uri: !lambda 'return x;'
-  on_end:
-    # Wait a short amount of time to see if an announcement starts
-    - wait_until:
-        condition:
-          - media_player.is_announcing:
-        timeout: 0.5s
-    # Announcement is finished and the I2S bus is free
-    - wait_until:
-        - and:
-            - not:
-                media_player.is_announcing:
-            - not:
-                speaker.is_playing:
-    # Restart only mWW if enabled; streaming wake words automatically restart
-    - if:
-        condition:
-          - lambda: return id(wake_word_engine_location).state == "On device";
-        then:
-          - lambda: id(va).set_use_wake_word(false);
-          - micro_wake_word.start:
-    - script.execute: set_idle_or_mute_phase
-    # Clear text sensors
-#    - text_sensor.template.publish:
-#        id: text_request
-#        state: ""
-#    - text_sensor.template.publish:
-#        id: text_response
-#        state: ""
-#    - script.execute: reset_led
-
-  on_error:
-    - if:
-        condition:
-          lambda: return !id(init_in_progress);
-        then:
-          - script.execute:
-              id: set_phase
-              phase: ${voice_assist_error_phase_id}
-          - delay: 1s
-          - script.execute: set_idle_or_mute_phase
-    - if:
-        condition:
-          - switch.is_on: use_listen_light
-        then:
-          - light.turn_on:
-              id: led
-              red: 100%
-              green: 0%
-              blue: 0%
-              brightness: 100%
-              effect: none
-    - delay: 2s
-    - script.execute: reset_led
-
-  on_client_connected:
-    - lambda: id(init_in_progress) = false;
-    - script.execute: start_wake_word
-    - script.execute: set_idle_or_mute_phase
-  on_client_disconnected:
-    - script.execute: stop_wake_word
-    - script.execute:
-        id: set_phase
-        phase: ${voice_assist_not_ready_phase_id}
-#  on_timer_started:
-#  on_timer_cancelled:
-#  on_timer_updated:
-#  on_timer_tick:
-  on_timer_finished:
-    - switch.turn_on: timer_ringing
-    - if:
-        condition:
-          - switch.is_on: use_listen_light
-        then:
-          - light.turn_on:
-              id: led
-              red: 0%
-              green: 100%
-              blue: 0%
-              brightness: 100%
-              effect: "Fast Pulse"
-    - wait_until:
-        media_player.is_announcing:
-    - script.execute:
-        id: set_phase
-        phase: ${voice_assist_timer_finished_phase_id}
-    - if:
-        condition:
-          - switch.is_on: use_listen_light
-        then:
-          - light.turn_on:
-              id: led
-              blue: 0%
-              red: 100%
-              green: 0%
-              effect: "Fast Pulse"
-
-script:
-  - id: reset_led
-    then:
-      - if:
-          condition:
-            - lambda: return id(wake_word_engine_location).state == "On device";
-            - switch.is_on: use_listen_light
-          then:
-            - light.turn_on:
-                id: led
-                red: 100%
-                green: 89%
-                blue: 71%
-                brightness: 30%
-                effect: none
-          else:
-            - if:
-                condition:
-                  - lambda: return id(wake_word_engine_location).state != "On device";
-                  - switch.is_on: use_listen_light
-                then:
-                  - light.turn_on:
-                      id: led
-                      red: 0%
-                      green: 100%
-                      blue: 100%
-                      brightness: 30%
-                      effect: none
-                else:
-                  - light.turn_off: led
-
-  - id: fetch_first_active_timer
-    then:
-      - lambda: |
-          const auto timers = id(va).get_timers();
-          auto output_timer = timers.begin()->second;
-          for (auto &iterable_timer : timers) {
-            if (iterable_timer.second.is_active && iterable_timer.second.seconds_left <= output_timer.seconds_left) {
-              output_timer = iterable_timer.second;
-            }
-          }
-          id(global_first_active_timer) = output_timer;
-  - id: check_if_timers_active
-    then:
-      - lambda: |
-          const auto timers = id(va).get_timers();
-          bool output = false;
-          if (timers.size() > 0) {
-            for (auto &iterable_timer : timers) {
-              if(iterable_timer.second.is_active) {
-                output = true;
-              }
-            }
-          }
-          id(global_is_timer_active) = output;
-  - id: fetch_first_timer
-    then:
-      - lambda: |
-          const auto timers = id(va).get_timers();
-          auto output_timer = timers.begin()->second;
-          for (auto &iterable_timer : timers) {
-            if (iterable_timer.second.seconds_left <= output_timer.seconds_left) {
-              output_timer = iterable_timer.second;
-            }
-          }
-          id(global_first_timer) = output_timer;
-  - id: check_if_timers
-    then:
-      - lambda: |
-          const auto timers = id(va).get_timers();
-          bool output = false;
-          if (timers.size() > 0) {
-            output = true;
-          }
-          id(global_is_timer) = output;
-
-  # Starts either mWW or the streaming wake word, depending on the configured location
-  - id: start_wake_word
-    then:
-      - if:
-          condition:
-            and:
-              - not:
-                  - voice_assistant.is_running:
-              - lambda: return id(wake_word_engine_location).state == "On device";
-          then:
-            - lambda: id(va).set_use_wake_word(false);
-            - micro_wake_word.start:
-      - if:
-          condition:
-            and:
-              - not:
-                  - voice_assistant.is_running:
-              - lambda: return id(wake_word_engine_location).state == "In Home Assistant";
-          then:
-            - lambda: id(va).set_use_wake_word(true);
-            - voice_assistant.start_continuous:
-  # Stops either mWW or the streaming wake word, depending on the configured location
-  - id: stop_wake_word
-    then:
-      - if:
-          condition:
-            lambda: return id(wake_word_engine_location).state == "In Home Assistant";
-          then:
-            - lambda: id(va).set_use_wake_word(false);
-            - voice_assistant.stop:
-      - if:
-          condition:
-            lambda: return id(wake_word_engine_location).state == "On device";
-          then:
-            - micro_wake_word.stop:
-  # Set the voice assistant phase to idle or muted, depending on if the software mute switch is activated
-  - id: set_idle_or_mute_phase
-    then:
-      - if:
-          condition:
-            switch.is_off: mute
-          then:
-            - script.execute:
-                id: set_phase
-                phase: ${voice_assist_idle_phase_id}
-          else:
-            - script.execute:
-                id: set_phase
-                phase: ${voice_assist_muted_phase_id}
-
-
-  - id: send_tts_uri_event
-    parameters:
-      tts_uri: string
-    then:
-      - homeassistant.event:
-          event: esphome.tts_uri
-          data:
-            uri: !lambda return tts_uri;
-  - id: send_stt_text_event
-    parameters:
-      stt_text: string
-    then:
-      - homeassistant.event:
-          event: esphome.stt_text
-          data:
-            text: !lambda return stt_text;
-  - id: send_tts_text_event
-    parameters:
-      tts_text: string
-    then:
-      - homeassistant.event:
-          event: esphome.tts_text
-          data:
-            text: !lambda return tts_text;
-
-  - id: set_phase
-    parameters:
-      phase: int
-    then:
-      - lambda: id(voice_assistant_phase) = phase;
-      - text_sensor.template.publish:
-          id: voice_assistant_phase_sensor
-          state: !lambda |-
-            char buf[8];
-            snprintf(buf, sizeof(buf), "%d", phase);
-            return std::string(buf);
-
-  - id: handle_screen_tap
-    then:
-      - script.execute: reset_led
-      - if:
-          condition:
-            switch.is_on: timer_ringing
-          then:
-            - switch.turn_off: timer_ringing
-          else:
-            - if:
-                condition:
-                  lambda: return id(wake_word_engine_location).state == "On device";
-                then:
-                  - if:
-                      condition:
-                        not:
-                          voice_assistant.is_running:
-                      then:
-                        - voice_assistant.start:
-                      else:
-                        - voice_assistant.stop:
-
-switch:
-  - platform: template
-    name: Use listen light
-    id: use_listen_light
-    optimistic: true
-    restore_mode: RESTORE_DEFAULT_ON
-    entity_category: config
-    on_turn_on:
-      - script.execute: reset_led
-    on_turn_off:
-      - script.execute: reset_led
-  - platform: template
-    name: Mute
-    id: mute
-    icon: "mdi:microphone-off"
-    optimistic: true
-    restore_mode: RESTORE_DEFAULT_OFF
-    entity_category: config
-    on_turn_off:
-      - microphone.unmute:
-      - script.execute:
-          id: set_phase
-          phase: ${voice_assist_idle_phase_id}
-    on_turn_on:
-      - microphone.mute:
-      - script.execute:
-          id: set_phase
-          phase: ${voice_assist_muted_phase_id}
-  - platform: template
-    id: timer_ringing
-    optimistic: true
-    internal: true
-    restore_mode: ALWAYS_OFF
-    on_turn_off:
-      # Turn off the repeat mode and disable the pause between playlist items
-      - lambda: |-
-              id(speaker_media_player)
-                ->make_call()
-                .set_command(media_player::MediaPlayerCommand::MEDIA_PLAYER_COMMAND_REPEAT_OFF)
-                .set_announcement(true)
-                .perform();
-              id(speaker_media_player)->set_playlist_delay_ms(speaker::AudioPipelineType::ANNOUNCEMENT, 0);
-      # Stop playing the alarm
-      - media_player.stop:
-          announcement: true
-    on_turn_on:
-      # Turn on the repeat mode and pause for 1000 ms between playlist items/repeats
-      - lambda: |-
-            id(speaker_media_player)
-              ->make_call()
-              .set_command(media_player::MediaPlayerCommand::MEDIA_PLAYER_COMMAND_REPEAT_ONE)
-              .set_announcement(true)
-              .perform();
-            id(speaker_media_player)->set_playlist_delay_ms(speaker::AudioPipelineType::ANNOUNCEMENT, 1000);
-      - media_player.speaker.play_on_device_media_file:
-          media_file: timer_finished_sound
-          announcement: true
-      - delay: 15min
-      - switch.turn_off: timer_ringing
-
-select:
-  - platform: ld2410
-    distance_resolution:
-      name: "distance resolution"
-    baud_rate:
-      name: "baud rate"
-    light_function:
-      name: light function
-    out_pin_level:
-      name: out pin level
-
-  - platform: template
-    entity_category: config
-    name: Wake word engine location
-    id: wake_word_engine_location
-    icon: "mdi:account-voice"
-    optimistic: true
-    restore_value: true
-    options:
-      - In Home Assistant
-      - On device
-    initial_option: On device
-    on_value:
-      - if:
-          condition:
-            lambda: return !id(init_in_progress);
-          then:
-            - wait_until:
-                lambda: return id(voice_assistant_phase) == ${voice_assist_muted_phase_id} || id(voice_assistant_phase) == ${voice_assist_idle_phase_id};
-            - if:
-                condition:
-                  lambda: return x == "In Home Assistant";
-                then:
-                  - micro_wake_word.stop
-                  - delay: 500ms
-                  - if:
-                      condition:
-                        switch.is_off: mute
-                      then:
-                        - lambda: id(va).set_use_wake_word(true);
-                        - voice_assistant.start_continuous:
-            - if:
-                condition:
-                  lambda: return x == "On device";
-                then:
-                  - lambda: id(va).set_use_wake_word(false);
-                  - voice_assistant.stop
-                  - delay: 500ms
-                  - if:
-                      condition:
-                        switch.is_off: mute
-                      then:
-                        - micro_wake_word.start
-
-globals:
-  - id: init_in_progress
-    type: bool
-    restore_value: false
-    initial_value: "true"
-  - id: voice_assistant_phase
-    type: int
-    restore_value: false
-    initial_value: ${voice_assist_not_ready_phase_id}
-  - id: global_first_active_timer
-    type: voice_assistant::Timer
-    restore_value: false
-  - id: global_is_timer_active
-    type: bool
-    restore_value: false
-  - id: global_first_timer
-    type: voice_assistant::Timer
-    restore_value: false
-  - id: global_is_timer
-    type: bool
-    restore_value: false
+  - file: ${error_illustration_file1}
+    id: casita_error
+    resize: ${imagewidth}x${imageheight}
+    type: RGB565
+  - file: ${timer_finished_illustration_file1}
+    id: casita_timer_finished
+    resize: ${imagewidth}x${imageheight}
+    type: RGB565
+  - file: ${loading_illustration_file1}
+    id: casita_initializing
+    resize: ${imagewidth}x${imageheight}
+    type: RGB565
+  - file: ${mute_illustration_file1}
+    id: casita_muted
+    resize: ${imagewidth}x${imageheight}
+    type: RGB565
+  - file: ${playing_illustration_file1}
+    id: casita_playing
+    resize: ${imagewidth}x${imageheight}
+    type: RGB565
 
 text_sensor:
-  - id: text_request
-    platform: template
-    name: "Text Request"
+  # 1) Phase ID from ESPHome voice device (numeric-as-string, e.g. "1","2","3"...)
+  - platform: homeassistant
+    id: ts_phase
+    internal: true
+    entity_id: sensor.${textdevice}_voice_assistant_phase_id
     on_value:
-      lambda: |-
-        if(id(text_request).state.length()>245) {
-          std::string name = id(text_request).state.c_str();
-          std::string truncated = esphome::str_truncate(name.c_str(),245);
-          id(text_request).state = (truncated+" ...").c_str();
-        }
+      then:
+        - logger.log:
+            format: "Voice assistant phase: %s"
+            args: [ "x.c_str()" ]
 
-  - id: text_response
-    platform: template
-    name: "Text Response"
+        # idle (1)
+        - if:
+            condition:
+              lambda: 'return x == "${voice_assist_idle_phase_id}";'
+            then:
+              - lvgl.image.update:
+                  id: assist_image
+                  src: casita_idle
+              - lvgl.widget.hide:
+                  id: request_box
+              - lvgl.widget.hide:
+                  id: response_box
+
+        # waiting for command (2)
+        - if:
+            condition:
+              lambda: 'return x == "${voice_assist_waiting_for_command_phase_id";'
+            then:
+              - lvgl.image.update:
+                  id: assist_image
+                  src: casita_listening
+              - lvgl.widget.hide:
+                  id: request_box
+              - lvgl.widget.hide:
+                  id: response_box
+
+        # listening (3)
+        - if:
+            condition:
+              lambda: 'return x == "${voice_assist_listening_phase_id}";'
+            then:
+              - lvgl.image.update:
+                  id: assist_image
+                  src: casita_listening
+              - lvgl.widget.hide:
+                  id: request_box
+              - lvgl.widget.hide:
+                  id: response_box
+
+        # thinking / processing (4)
+        - if:
+            condition:
+              lambda: 'return x == "${voice_assist_thinking_phase_id}";'
+            then:
+              - lvgl.image.update:
+                  id: assist_image
+                  src: casita_thinking
+              - lvgl.widget.show:
+                  id: request_box
+              - lvgl.widget.hide:
+                  id: response_box
+
+        # replying (5)
+        - if:
+            condition:
+              lambda: 'return x == "${voice_assist_replying_phase_id}";'
+            then:
+              - lvgl.image.update:
+                  id: assist_image
+                  src: casita_replying
+              - lvgl.widget.show:
+                  id: response_box
+              - lvgl.widget.hide:
+                  id: request_box
+
+        # not ready / initializing (10)
+        - if:
+            condition:
+              lambda: 'return x == "${voice_assist_not_ready_phase_id}";'
+            then:
+              - lvgl.image.update:
+                  id: assist_image
+                  src: casita_initializing
+              - lvgl.widget.hide:
+                  id: request_box
+              - lvgl.widget.hide:
+                  id: response_box
+
+        # error (11)
+        - if:
+            condition:
+              lambda: 'return x == "${voice_assist_error_phase_id}";'
+            then:
+              - lvgl.image.update:
+                  id: assist_image
+                  src: casita_error
+              - lvgl.widget.hide:
+                  id: request_box
+              - lvgl.widget.hide:
+                  id: response_box
+
+        # muted (12)
+        - if:
+            condition:
+              lambda: 'return x == "${voice_assist_muted_phase_id}";'
+            then:
+              - lvgl.image.update:
+                  id: assist_image
+                  src: casita_muted
+              - lvgl.widget.hide:
+                  id: request_box
+              - lvgl.widget.hide:
+                  id: response_box
+
+        # playing (13)
+        - if:
+            condition:
+              lambda: 'return x == "${voice_assist_playing_phase_id}";'
+            then:
+              - lvgl.image.update:
+                  id: assist_image
+                  src: casita_muted
+              - lvgl.widget.hide:
+                  id: request_box
+              - lvgl.widget.hide:
+                  id: response_box
+
+        # timer finished (20)
+        - if:
+            condition:
+              lambda: 'return x == "${voice_assist_timer_finished_phase_id}";'
+            then:
+              - lvgl.image.update:
+                  id: assist_image
+                  src: casita_timer_finished
+              - lvgl.widget.hide:
+                  id: request_box
+              - lvgl.widget.hide:
+                  id: response_box
+
+  # 2) Request text from HA (only shown while "thinking")
+  - platform: homeassistant
+    id: ts_request
+    internal: true
+    entity_id: sensor.${textdevice}_text_request
     on_value:
-      lambda: |-
-        if(id(text_response).state.length()>245) {
-          std::string name = id(text_response).state.c_str();
-          std::string truncated = esphome::str_truncate(name.c_str(),245);
-          id(text_response).state = (truncated+" ...").c_str();
-        }
+      then:
+        - logger.log:
+            format: "Request text updated to: %s"
+            args: [ "x.c_str()" ]
+        - if:
+            condition:
+              lambda: |-
+                // Only update when in thinking phase and not just placeholder "..."
+                return id(ts_phase).state == "${voice_assist_thinking_phase_id}" && x != "...";
+            then:
+              - lvgl.textarea.update:
+                  id: request_box
+                  text: !lambda 'return x;'
 
-  - platform: template
-    id: voice_assistant_phase_sensor
-    name: "Voice Assistant Phase ID"
+  # 3) Response text from HA (always store latest, only show when phase == replying)
+  - platform: homeassistant
+    id: ts_response
+    internal: true
+    entity_id: sensor.${textdevice}_text_response
+    on_value:
+      then:
+        - logger.log:
+            format: "Response text updated to: %s"
+            args: [ "x.c_str()" ]
+        - if:
+            condition:
+              lambda: |-
+                // Ignore placeholder "..."
+                return x != "...";
+            then:
+              - lvgl.textarea.update:
+                  id: response_box
+                  text: !lambda 'return x;'
+
+switch:
+  - platform: gpio
+    name: Relay 1
+    pin:
+      number: GPIO40
+      inverted: true
+  - platform: gpio
+    name: Relay 2
+    pin:
+      number: GPIO2
+      inverted: true
+  - platform: gpio
+    name: Relay 3
+    pin:
+      number: GPIO1
+      inverted: true
+
+output:
+  - platform: ledc
+    id: backlight_output
+    pin: GPIO38
+    frequency: 150Hz
+    min_power: 0.01
+    zero_means_zero: true
+
+light:
+  - platform: monochromatic
+    name: Backlight
+    id: display_backlight
+    output: backlight_output
+    restore_mode: ALWAYS_ON
+    default_transition_length: 1s
+
+spi:
+  - id: lcd_spi
+    clk_pin: GPIO48
+    mosi_pin: GPIO47
+
+i2c:
+  id: touchscreen_bus
+  sda: GPIO19
+  scl:
+    number: 45
+    ignore_strapping_warning: true
+
+display:
+  - platform: st7701s
+    id: tft_display
+    dimensions:
+      width: 480
+      height: 480
+    # rotation: 270    #uncomment for placement with down-facing USB socket
+    spi_mode: MODE3
+    data_rate: 2MHz
+    color_order: RGB
+    invert_colors: False
+    cs_pin: 39
+    de_pin: 18
+    hsync_pin: 16
+    vsync_pin: 17
+    pclk_pin: 21
+    pclk_frequency: 12MHz
+    pclk_inverted: False
+    hsync_pulse_width: 8
+    hsync_front_porch: 10
+    hsync_back_porch: 20
+    vsync_pulse_width: 8
+    vsync_front_porch: 10
+    vsync_back_porch: 10
     update_interval: never
+    auto_clear_enabled: False
+    init_sequence:
+      - 1
+      - [0xFF, 0x77, 0x01, 0x00, 0x00, 0x10] # CMD2_BKSEL_BK0
+      - [0xCD, 0x00] # disable MDT flag
+    data_pins:
+      red: [11, 12, 13, 14, 0]
+      green: [8, 20, 3, 46, 9, 10]
+      blue: [4, 5, 6, 7, 15]
+
+touchscreen:
+  - platform: gt911
+    id: tft_touch
+    display: tft_display
+#    transform:     #uncomment for placement with down-facing USB socket
+#      swap_xy: true
+#      mirror_x: true
+    on_touch:
+      then:
+        - binary_sensor.template.publish:
+            id: touch_input
+            state: ON
+    on_release:
+      then:
+        - binary_sensor.template.publish:
+            id: touch_input
+            state: OFF
+        - homeassistant.action:
+            action: button.press
+            data:
+              entity_id: button.${textdevice}_virtual_touch
+
+binary_sensor:
+  - platform: template
+    name: "Touch Button"
+    id: touch_input
+
+lvgl:
+  disp_bg_color: black
+  widgets:
+    - image:
+        id: assist_image
+        align: CENTER
+        src: casita_idle   # default on boot
+
+    # Text box for the request text (shown when thinking)
+    - textarea:
+        id: request_box
+        text: ""
+        align: BOTTOM_MID
+        width: 440
+        height: 140
+        one_line: false
+
+    # Text box for the response text (shown when replying)
+    - textarea:
+        id: response_box
+        text: ""
+        align: BOTTOM_MID
+        width: 440
+        height: 140
+        one_line: false
