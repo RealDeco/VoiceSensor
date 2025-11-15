@@ -1,3 +1,4 @@
+```
 alias: request_response_to_dashboard
 description: ""
 triggers:
@@ -38,3 +39,5 @@ content: "# {{ states('input_text.airesponse') }}"
 grid_options:
   columns: 12
   rows: 7
+
+```
