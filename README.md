@@ -8,13 +8,12 @@ A compact 3-in-1 device combining a Voice Assistant, Presence Sensor, and Ambien
 — or an “Ear-Only” setup without additional sensors using other devices for display and audio.
 
 
+
 ---
 
-## 📸 Images
-
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/06bbc9ff-7d2f-4aa9-9395-547f1c3b3554" width="45%" />
-  <img src="https://github.com/user-attachments/assets/c0871b54-cf89-4bdd-9b51-5e7f91af2e9b" width="45%" />
+  <img src="https://github.com/user-attachments/assets/802fff0f-d109-4112-8e00-402f8a40eb36" width="45%" />
+  <img src="https://github.com/user-attachments/assets/13dd2121-11b5-4d81-a2b5-1f88549423ca" width="45%" />
 </p>
 
 <p align="center">
@@ -28,6 +27,7 @@ A compact 3-in-1 device combining a Voice Assistant, Presence Sensor, and Ambien
 </p>
 
 <p align="center">
+  <img src="https://github.com/user-attachments/assets/06bbc9ff-7d2f-4aa9-9395-547f1c3b3554" width="45%" />
   <img src="https://github.com/user-attachments/assets/7a953ff4-168c-42d4-afb0-72a4bac22e5e" width="45%" />
 </p>
 
