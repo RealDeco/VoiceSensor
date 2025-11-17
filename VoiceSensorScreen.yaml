@@ -2,14 +2,14 @@ substitutions:
   name: esphome-web-c89274
   friendly_name: Voicesensor Screen
 
-  imagemodel1: "Gwen"
+  imagemodel1: "Luffy"
   imagewidth: "480"
   imageheight: "480"
 
-  # Device that exposes text_request / text_response and voice_assistant_phase_id
-  textdevice: "esphome_web_530014"
+  voiceear: "esphome_web_530014"
+#  voiceear: "esphome_web_fa1d58" #respeaker lite
 
-  # Voice assistant phases (must match the other device)
+  # Voice assistant phases (must match the sending device)
   voice_assist_idle_phase_id: "1"
   voice_assist_waiting_for_command_phase_id: "2"
   voice_assist_listening_phase_id: "3"
@@ -26,7 +26,6 @@ substitutions:
   listening_illustration_file1: https://github.com/RealDeco/xiaozhi-esphome/raw/main/images/${imagemodel1}/${imagewidth}x${imageheight}/listening.png
   thinking_illustration_file1: https://github.com/RealDeco/xiaozhi-esphome/raw/main/images/${imagemodel1}/${imagewidth}x${imageheight}/thinking.png
   replying_illustration_file1: https://github.com/RealDeco/xiaozhi-esphome/raw/main/images/${imagemodel1}/${imagewidth}x${imageheight}/replying.png
-
   loading_illustration_file1: https://github.com/RealDeco/xiaozhi-esphome/raw/main/images/${imagemodel1}/${imagewidth}x${imageheight}/loading.png
   error_illustration_file1: https://github.com/RealDeco/xiaozhi-esphome/raw/main/images/${imagemodel1}/${imagewidth}x${imageheight}/error.png
   timer_finished_illustration_file1: https://github.com/RealDeco/xiaozhi-esphome/raw/main/images/${imagemodel1}/${imagewidth}x${imageheight}/timer_finished.png
@@ -41,11 +40,14 @@ esphome:
   on_boot:
     priority: 800
     then:
-      # Hide text areas until we actually enter a phase that uses them
       - lvgl.widget.hide:
           id: request_box
       - lvgl.widget.hide:
+          id: request_box_short
+      - lvgl.widget.hide:
           id: response_box
+      - lvgl.widget.hide:
+          id: response_box_short
 
 esp32:
   board: esp32-s3-devkitc-1
@@ -65,6 +67,54 @@ psram:
 logger:
 
 api:
+  actions:
+    - action: receive_stt_text
+      variables:
+        stt_text: string
+      then:
+        - if:
+            condition:
+              lambda: 'return stt_text.size() < 120;'
+            then:
+              - lvgl.widget.show:
+                  id: request_box_short
+              - lvgl.widget.hide:
+                  id: request_box
+              - lvgl.textarea.update:
+                  id: request_box_short
+                  text: !lambda 'return stt_text;'
+            else:
+              - lvgl.widget.show:
+                  id: request_box
+              - lvgl.widget.hide:
+                  id: request_box_short
+              - lvgl.textarea.update:
+                  id: request_box
+                  text: !lambda 'return stt_text;'
+
+    - action: receive_tts_text
+      variables:
+        tts_text: string
+      then:
+        - if:
+            condition:
+              lambda: 'return tts_text.size() < 120;'
+            then:
+              - lvgl.widget.show:
+                  id: response_box_short
+              - lvgl.widget.hide:
+                  id: response_box
+              - lvgl.textarea.update:
+                  id: response_box_short
+                  text: !lambda 'return tts_text;'
+            else:
+              - lvgl.widget.show:
+                  id: response_box
+              - lvgl.widget.hide:
+                  id: response_box_short
+              - lvgl.textarea.update:
+                  id: response_box
+                  text: !lambda 'return tts_text;'
 
 ota:
   - platform: esphome
@@ -117,11 +167,10 @@ image:
     type: RGB565
 
 text_sensor:
-  # 1) Phase ID from ESPHome voice device (numeric-as-string, e.g. "1","2","3"...)
   - platform: homeassistant
     id: ts_phase
     internal: true
-    entity_id: sensor.${textdevice}_voice_assistant_phase_id
+    entity_id: sensor.${voiceear}_voice_assistant_phase_id
     on_value:
       then:
         - logger.log:
@@ -139,7 +188,11 @@ text_sensor:
               - lvgl.widget.hide:
                   id: request_box
               - lvgl.widget.hide:
+                  id: request_box_short
+              - lvgl.widget.hide:
                   id: response_box
+              - lvgl.widget.hide:
+                  id: response_box_short
 
         # waiting for command (2)
         - if:
@@ -152,7 +205,11 @@ text_sensor:
               - lvgl.widget.hide:
                   id: request_box
               - lvgl.widget.hide:
+                  id: request_box_short
+              - lvgl.widget.hide:
                   id: response_box
+              - lvgl.widget.hide:
+                  id: response_box_short
 
         # listening (3)
         - if:
@@ -165,7 +222,11 @@ text_sensor:
               - lvgl.widget.hide:
                   id: request_box
               - lvgl.widget.hide:
+                  id: request_box_short
+              - lvgl.widget.hide:
                   id: response_box
+              - lvgl.widget.hide:
+                  id: response_box_short
 
         # thinking / processing (4)
         - if:
@@ -175,10 +236,12 @@ text_sensor:
               - lvgl.image.update:
                   id: assist_image
                   src: casita_thinking
-              - lvgl.widget.show:
-                  id: request_box
+              # Let receive_stt_text decide which request box to show.
+              # Just ensure response boxes are hidden here.
               - lvgl.widget.hide:
                   id: response_box
+              - lvgl.widget.hide:
+                  id: response_box_short
 
         # replying (5)
         - if:
@@ -188,10 +251,12 @@ text_sensor:
               - lvgl.image.update:
                   id: assist_image
                   src: casita_replying
-              - lvgl.widget.show:
-                  id: response_box
+              # Let receive_tts_text decide which response box to show.
+              # Ensure request boxes are hidden here.
               - lvgl.widget.hide:
                   id: request_box
+              - lvgl.widget.hide:
+                  id: request_box_short
 
         # not ready / initializing (10)
         - if:
@@ -204,7 +269,11 @@ text_sensor:
               - lvgl.widget.hide:
                   id: request_box
               - lvgl.widget.hide:
+                  id: request_box_short
+              - lvgl.widget.hide:
                   id: response_box
+              - lvgl.widget.hide:
+                  id: response_box_short
 
         # error (11)
         - if:
@@ -217,7 +286,11 @@ text_sensor:
               - lvgl.widget.hide:
                   id: request_box
               - lvgl.widget.hide:
+                  id: request_box_short
+              - lvgl.widget.hide:
                   id: response_box
+              - lvgl.widget.hide:
+                  id: response_box_short
 
         # muted (12)
         - if:
@@ -230,7 +303,11 @@ text_sensor:
               - lvgl.widget.hide:
                   id: request_box
               - lvgl.widget.hide:
+                  id: request_box_short
+              - lvgl.widget.hide:
                   id: response_box
+              - lvgl.widget.hide:
+                  id: response_box_short
 
         # playing (13)
         - if:
@@ -243,7 +320,11 @@ text_sensor:
               - lvgl.widget.hide:
                   id: request_box
               - lvgl.widget.hide:
+                  id: request_box_short
+              - lvgl.widget.hide:
                   id: response_box
+              - lvgl.widget.hide:
+                  id: response_box_short
 
         # timer finished (20)
         - if:
@@ -256,47 +337,11 @@ text_sensor:
               - lvgl.widget.hide:
                   id: request_box
               - lvgl.widget.hide:
+                  id: request_box_short
+              - lvgl.widget.hide:
                   id: response_box
-
-  # 2) Request text from HA (only shown while "thinking")
-  - platform: homeassistant
-    id: ts_request
-    internal: true
-    entity_id: sensor.${textdevice}_text_request
-    on_value:
-      then:
-        - logger.log:
-            format: "Request text updated to: %s"
-            args: [ "x.c_str()" ]
-        - if:
-            condition:
-              lambda: |-
-                // Only update when in thinking phase and not just placeholder "..."
-                return id(ts_phase).state == "${voice_assist_thinking_phase_id}" && x != "...";
-            then:
-              - lvgl.textarea.update:
-                  id: request_box
-                  text: !lambda 'return x;'
-
-  # 3) Response text from HA (always store latest, only show when phase == replying)
-  - platform: homeassistant
-    id: ts_response
-    internal: true
-    entity_id: sensor.${textdevice}_text_response
-    on_value:
-      then:
-        - logger.log:
-            format: "Response text updated to: %s"
-            args: [ "x.c_str()" ]
-        - if:
-            condition:
-              lambda: |-
-                // Ignore placeholder "..."
-                return x != "...";
-            then:
-              - lvgl.textarea.update:
-                  id: response_box
-                  text: !lambda 'return x;'
+              - lvgl.widget.hide:
+                  id: response_box_short
 
 switch:
   - platform: gpio
@@ -398,7 +443,7 @@ touchscreen:
         - homeassistant.action:
             action: button.press
             data:
-              entity_id: button.${textdevice}_virtual_touch
+              entity_id: button.${voiceear}_virtual_touch
 
 binary_sensor:
   - platform: template
@@ -413,7 +458,14 @@ lvgl:
         align: CENTER
         src: casita_idle   # default on boot
 
-    # Text box for the request text (shown when thinking)
+    - textarea:
+        id: request_box_short
+        text: ""
+        align: BOTTOM_MID
+        width: 440
+        height: 80
+        one_line: false
+
     - textarea:
         id: request_box
         text: ""
@@ -422,7 +474,14 @@ lvgl:
         height: 140
         one_line: false
 
-    # Text box for the response text (shown when replying)
+    - textarea:
+        id: response_box_short
+        text: ""
+        align: BOTTOM_MID
+        width: 440
+        height: 80
+        one_line: false
+
     - textarea:
         id: response_box
         text: ""
