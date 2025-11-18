@@ -1,5 +1,5 @@
 ```
-alias: Play TTS URI (MiniVA)
+alias: Play TTS URI (VoiceEar)
 description: ""
 triggers:
   - trigger: event
