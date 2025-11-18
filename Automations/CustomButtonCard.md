@@ -1,0 +1,87 @@
+
+Place your 9 images of choice in `config/www/oknabu/<modelname>` as:
+
+* `idle.png`
+* `listening.png`
+* `thinking.png`
+* `replying.png`
+* `error.png`
+* `mute.png`
+* `playing.png`
+* `loading.png`
+* `timer_finished.png`
+
+Place 1 image in `config/www/oknabu/Other` as: tron-1.png (standby image)
+
+example: `config/www/oknabu/Dory/idle.png`
+
+add a button_card and paste this:
+
+```
+type: custom:button-card
+entity: assist_satellite.miniva_assist_satellite
+name: Ok Nabu
+show_name: false
+show_state: false
+show_icon: false
+tap_action:
+  action: call-service
+  service: button.press
+  service_data:
+    entity_id: button.esphome_web_530014_virtual_touch
+  haptic: medium
+styles:
+  card:
+    - aspect-ratio: 1/1
+    - border-radius: var(--ha-card-border-radius)
+    - box-shadow: var(--ha-card-box-shadow)
+    - border-style: var(--ha-card-border-style)
+    - border-width: var(--ha-card-border-width)
+    - border-color: var(--ha-card-border-color)
+    - overflow: hidden
+    - padding: 0
+  grid:
+    - grid-template-areas: "\"info\""
+    - grid-template-columns: 1fr
+    - grid-template-rows: 1fr
+  custom_fields:
+    info:
+      - position: absolute
+      - top: 0
+      - left: 0
+      - width: 100%
+      - height: 100%
+custom_fields:
+  info: |
+    [[[
+      const phase = states['sensor.esphome_web_530014_voice_assistant_phase_id']?.state;
+
+      let src = '/local/oknabu/default.png';
+
+      if (phase === '1')  src = '/local/oknabu/Other/tron-1.png';
+      if (phase === '2')  src = '/local/oknabu/Gwen/idle.png';
+      if (phase === '3')  src = '/local/oknabu/Gwen/listening.png';
+      if (phase === '4')  src = '/local/oknabu/Gwen/thinking.png';
+      if (phase === '5')  src = '/local/oknabu/Gwen/replying.png';
+      if (phase === '10') src = '/local/oknabu/Gwen/loading.png';
+      if (phase === '11') src = '/local/oknabu/Gwen/error.png';
+      if (phase === '12') src = '/local/oknabu/Gwen/mute.png';
+      if (phase === '13') src = '/local/oknabu/Gwen/playing.png';
+      if (phase === '20') src = '/local/oknabu/Gwen/timer_finished.png';
+
+      return `
+        <img
+          src="${src}"
+          style="
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 0;
+            display: block;
+          "
+        />
+      `;
+    ]]]
+card_mod:
+  class: hki
+```
