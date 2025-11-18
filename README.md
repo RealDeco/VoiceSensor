@@ -45,14 +45,18 @@ An older project from a couple of years back.
 
 ---
 
-### **`VoiceSensorNEW.yaml` (ESP32-S3 Zero)**
-
-The new recommended version.
+### **`VoiceSensorNEW.yaml` (ESP32-S3 Zero + inmp441 mic + ld2410c presence sensor + bm1750 light sensor)**
 
 * Works **only** with **ESP32-S3 Zero** (not SuperMini).
 * Zero includes **2MB PSRAM**, required for on-device MicroWakeWord.
 * Supports **up to 2 wake words**, processed locally.
 * For outputting responses to an external media player, see: **[tts_uri.md](tts_uri.md)**
+
+---
+
+### **`VoiceEar.yaml` (ESP32-S3 Zero + inmp441 mic, no sensors)**
+
+* Just the "Ear" (no sensors) version of "VoiceSensor"
 
 ---
 
