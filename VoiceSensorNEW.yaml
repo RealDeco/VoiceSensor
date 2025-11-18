@@ -403,12 +403,6 @@ voice_assistant:
               red: 0%
               green: 0%
               effect: "Slow Pulse"
-    - text_sensor.template.publish:
-        id: text_request
-        state: "..."
-    - text_sensor.template.publish:
-        id: text_response
-        state: "..."
   on_stt_vad_start:
     - script.execute:
         id: set_phase
@@ -432,13 +426,13 @@ voice_assistant:
     - script.execute:
         id: send_stt_text_event
         stt_text: !lambda 'return x;'
-    - text_sensor.template.publish:
-        id: text_request
-        state: !lambda return x;
   on_tts_start:
     - script.execute:
         id: send_tts_text_event
         tts_text: !lambda 'return x;'
+    - script.execute:
+        id: set_phase
+        phase: ${voice_assist_replying_phase_id}
     - if:
         condition:
           - switch.is_on: use_listen_light
@@ -450,12 +444,6 @@ voice_assistant:
               green: 0%
               brightness: 100%
               effect: none
-    - text_sensor.template.publish:
-        id: text_response
-        state: !lambda return x;
-    - script.execute:
-        id: set_phase
-        phase: ${voice_assist_replying_phase_id}
   on_tts_end:
     - script.execute:
         id: send_tts_uri_event
@@ -481,14 +469,6 @@ voice_assistant:
           - lambda: id(va).set_use_wake_word(false);
           - micro_wake_word.start:
     - script.execute: set_idle_or_mute_phase
-    # Clear text sensors
-#    - text_sensor.template.publish:
-#        id: text_request
-#        state: ""
-#    - text_sensor.template.publish:
-#        id: text_response
-#        state: ""
-#    - script.execute: reset_led
 
   on_error:
     - if:
@@ -690,6 +670,7 @@ script:
       - homeassistant.event:
           event: esphome.tts_uri
           data:
+            node: ${name}
             uri: !lambda return tts_uri;
   - id: send_stt_text_event
     parameters:
@@ -698,6 +679,7 @@ script:
       - homeassistant.event:
           event: esphome.stt_text
           data:
+            node: ${name}
             text: !lambda return stt_text;
   - id: send_tts_text_event
     parameters:
@@ -706,6 +688,7 @@ script:
       - homeassistant.event:
           event: esphome.tts_text
           data:
+            node: ${name}
             text: !lambda return tts_text;
 
   - id: set_phase
@@ -879,28 +862,6 @@ globals:
     restore_value: false
 
 text_sensor:
-  - id: text_request
-    platform: template
-    name: "Text Request"
-    on_value:
-      lambda: |-
-        if(id(text_request).state.length()>245) {
-          std::string name = id(text_request).state.c_str();
-          std::string truncated = esphome::str_truncate(name.c_str(),245);
-          id(text_request).state = (truncated+" ...").c_str();
-        }
-
-  - id: text_response
-    platform: template
-    name: "Text Response"
-    on_value:
-      lambda: |-
-        if(id(text_response).state.length()>245) {
-          std::string name = id(text_response).state.c_str();
-          std::string truncated = esphome::str_truncate(name.c_str(),245);
-          id(text_response).state = (truncated+" ...").c_str();
-        }
-
   - platform: template
     id: voice_assistant_phase_sensor
     name: "Voice Assistant Phase ID"
