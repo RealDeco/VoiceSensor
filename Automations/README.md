@@ -1,1 +1,1 @@
-automations and dashboard stuff
+readme to be updated..
