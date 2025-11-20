@@ -116,6 +116,17 @@ api:
                   id: response_box
                   text: !lambda 'return tts_text;'
 
+    - action: receive_phase
+      variables:
+        phase: int
+      then:
+        - logger.log:
+            format: "Voice assistant phase via API: %d"
+            args: [ 'phase' ]
+        - script.execute:
+            id: handle_phase
+            phase: !lambda 'return phase;'
+
 ota:
   - platform: esphome
 
@@ -166,183 +177,178 @@ image:
     resize: ${imagewidth}x${imageheight}
     type: RGB565
 
-text_sensor:
-  - platform: homeassistant
-    id: ts_phase
-    internal: true
-#    entity_id: sensor.${voiceear}_voice_assistant_phase_id
-    entity_id: input_text.phase_id_voiceear
-    on_value:
-      then:
-        - logger.log:
-            format: "Voice assistant phase: %s"
-            args: [ "x.c_str()" ]
+script:
+  - id: handle_phase
+    parameters:
+      phase: int
+    then:
+      - logger.log:
+          format: "Voice assistant phase (int): %d"
+          args: [ 'phase' ]
 
-        # idle (1)
-        - if:
-            condition:
-              lambda: 'return x == "${voice_assist_idle_phase_id}";'
-            then:
-              - lvgl.image.update:
-                  id: assist_image
-                  src: casita_idle
-              - lvgl.widget.hide:
-                  id: request_box
-              - lvgl.widget.hide:
-                  id: request_box_short
-              - lvgl.widget.hide:
-                  id: response_box
-              - lvgl.widget.hide:
-                  id: response_box_short
+      # idle (1)
+      - if:
+          condition:
+            lambda: 'return phase == ${voice_assist_idle_phase_id};'
+          then:
+            - lvgl.image.update:
+                id: assist_image
+                src: casita_idle
+            - lvgl.widget.hide:
+                id: request_box
+            - lvgl.widget.hide:
+                id: request_box_short
+            - lvgl.widget.hide:
+                id: response_box
+            - lvgl.widget.hide:
+                id: response_box_short
 
-        # waiting for command (2)
-        - if:
-            condition:
-              lambda: 'return x == "${voice_assist_waiting_for_command_phase_id}";'
-            then:
-              - lvgl.image.update:
-                  id: assist_image
-                  src: casita_waiting
-              - lvgl.widget.hide:
-                  id: request_box
-              - lvgl.widget.hide:
-                  id: request_box_short
-              - lvgl.widget.hide:
-                  id: response_box
-              - lvgl.widget.hide:
-                  id: response_box_short
+      # waiting for command (2)
+      - if:
+          condition:
+            lambda: 'return phase == ${voice_assist_waiting_for_command_phase_id};'
+          then:
+            - lvgl.image.update:
+                id: assist_image
+                src: casita_waiting
+            - lvgl.widget.hide:
+                id: request_box
+            - lvgl.widget.hide:
+                id: request_box_short
+            - lvgl.widget.hide:
+                id: response_box
+            - lvgl.widget.hide:
+                id: response_box_short
 
-        # listening (3)
-        - if:
-            condition:
-              lambda: 'return x == "${voice_assist_listening_phase_id}";'
-            then:
-              - lvgl.image.update:
-                  id: assist_image
-                  src: casita_listening
-              - lvgl.widget.hide:
-                  id: request_box
-              - lvgl.widget.hide:
-                  id: request_box_short
-              - lvgl.widget.hide:
-                  id: response_box
-              - lvgl.widget.hide:
-                  id: response_box_short
+      # listening (3)
+      - if:
+          condition:
+            lambda: 'return phase == ${voice_assist_listening_phase_id};'
+          then:
+            - lvgl.image.update:
+                id: assist_image
+                src: casita_listening
+            - lvgl.widget.hide:
+                id: request_box
+            - lvgl.widget.hide:
+                id: request_box_short
+            - lvgl.widget.hide:
+                id: response_box
+            - lvgl.widget.hide:
+                id: response_box_short
 
-        # thinking / processing (4)
-        - if:
-            condition:
-              lambda: 'return x == "${voice_assist_thinking_phase_id}";'
-            then:
-              - lvgl.image.update:
-                  id: assist_image
-                  src: casita_thinking
-              # Let receive_stt_text decide which request box to show.
-              # Just ensure response boxes are hidden here.
-              - lvgl.widget.hide:
-                  id: response_box
-              - lvgl.widget.hide:
-                  id: response_box_short
+      # thinking / processing (4)
+      - if:
+          condition:
+            lambda: 'return phase == ${voice_assist_thinking_phase_id};'
+          then:
+            - lvgl.image.update:
+                id: assist_image
+                src: casita_thinking
+            # Let receive_stt_text decide which request box to show.
+            - lvgl.widget.hide:
+                id: response_box
+            - lvgl.widget.hide:
+                id: response_box_short
 
-        # replying (5)
-        - if:
-            condition:
-              lambda: 'return x == "${voice_assist_replying_phase_id}";'
-            then:
-              - lvgl.image.update:
-                  id: assist_image
-                  src: casita_replying
-              # Let receive_tts_text decide which response box to show.
-              # Ensure request boxes are hidden here.
-              - lvgl.widget.hide:
-                  id: request_box
-              - lvgl.widget.hide:
-                  id: request_box_short
+      # replying (5)
+      - if:
+          condition:
+            lambda: 'return phase == ${voice_assist_replying_phase_id};'
+          then:
+            - lvgl.image.update:
+                id: assist_image
+                src: casita_replying
+            # Let receive_tts_text decide which response box to show.
+            - lvgl.widget.hide:
+                id: request_box
+            - lvgl.widget.hide:
+                id: request_box_short
 
-        # not ready / initializing (10)
-        - if:
-            condition:
-              lambda: 'return x == "${voice_assist_not_ready_phase_id}";'
-            then:
-              - lvgl.image.update:
-                  id: assist_image
-                  src: casita_initializing
-              - lvgl.widget.hide:
-                  id: request_box
-              - lvgl.widget.hide:
-                  id: request_box_short
-              - lvgl.widget.hide:
-                  id: response_box
-              - lvgl.widget.hide:
-                  id: response_box_short
+      # not ready / initializing (10)
+      - if:
+          condition:
+            lambda: 'return phase == ${voice_assist_not_ready_phase_id};'
+          then:
+            - lvgl.image.update:
+                id: assist_image
+                src: casita_initializing
+            - lvgl.widget.hide:
+                id: request_box
+            - lvgl.widget.hide:
+                id: request_box_short
+            - lvgl.widget.hide:
+                id: response_box
+            - lvgl.widget.hide:
+                id: response_box_short
 
-        # error (11)
-        - if:
-            condition:
-              lambda: 'return x == "${voice_assist_error_phase_id}";'
-            then:
-              - lvgl.image.update:
-                  id: assist_image
-                  src: casita_error
-              - lvgl.widget.hide:
-                  id: request_box
-              - lvgl.widget.hide:
-                  id: request_box_short
-              - lvgl.widget.hide:
-                  id: response_box
-              - lvgl.widget.hide:
-                  id: response_box_short
+      # error (11)
+      - if:
+          condition:
+            lambda: 'return phase == ${voice_assist_error_phase_id};'
+          then:
+            - lvgl.image.update:
+                id: assist_image
+                src: casita_error
+            - lvgl.widget.hide:
+                id: request_box
+            - lvgl.widget.hide:
+                id: request_box_short
+            - lvgl.widget.hide:
+                id: response_box
+            - lvgl.widget.hide:
+                id: response_box_short
 
-        # muted (12)
-        - if:
-            condition:
-              lambda: 'return x == "${voice_assist_muted_phase_id}";'
-            then:
-              - lvgl.image.update:
-                  id: assist_image
-                  src: casita_muted
-              - lvgl.widget.hide:
-                  id: request_box
-              - lvgl.widget.hide:
-                  id: request_box_short
-              - lvgl.widget.hide:
-                  id: response_box
-              - lvgl.widget.hide:
-                  id: response_box_short
+      # muted (12)
+      - if:
+          condition:
+            lambda: 'return phase == ${voice_assist_muted_phase_id};'
+          then:
+            - lvgl.image.update:
+                id: assist_image
+                src: casita_muted
+            - lvgl.widget.hide:
+                id: request_box
+            - lvgl.widget.hide:
+                id: request_box_short
+            - lvgl.widget.hide:
+                id: response_box
+            - lvgl.widget.hide:
+                id: response_box_short
 
-        # playing (13)
-        - if:
-            condition:
-              lambda: 'return x == "${voice_assist_playing_phase_id}";'
-            then:
-              - lvgl.image.update:
-                  id: assist_image
-                  src: casita_muted
-              - lvgl.widget.hide:
-                  id: request_box
-              - lvgl.widget.hide:
-                  id: request_box_short
-              - lvgl.widget.hide:
-                  id: response_box
-              - lvgl.widget.hide:
-                  id: response_box_short
+      # playing (13)
+      - if:
+          condition:
+            lambda: 'return phase == ${voice_assist_playing_phase_id};'
+          then:
+            - lvgl.image.update:
+                id: assist_image
+                src: casita_playing
+            - lvgl.widget.hide:
+                id: request_box
+            - lvgl.widget.hide:
+                id: request_box_short
+            - lvgl.widget.hide:
+                id: response_box
+            - lvgl.widget.hide:
+                id: response_box_short
 
-        # timer finished (20)
-        - if:
-            condition:
-              lambda: 'return x == "${voice_assist_timer_finished_phase_id}";'
-            then:
-              - lvgl.image.update:
-                  id: assist_image
-                  src: casita_timer_finished
-              - lvgl.widget.hide:
-                  id: request_box
-              - lvgl.widget.hide:
-                  id: request_box_short
-              - lvgl.widget.hide:
-                  id: response_box
-              - lvgl.widget.hide:
-                  id: response_box_short
+      # timer finished (20)
+      - if:
+          condition:
+            lambda: 'return phase == ${voice_assist_timer_finished_phase_id};'
+          then:
+            - lvgl.image.update:
+                id: assist_image
+                src: casita_timer_finished
+            - lvgl.widget.hide:
+                id: request_box
+            - lvgl.widget.hide:
+                id: request_box_short
+            - lvgl.widget.hide:
+                id: response_box
+            - lvgl.widget.hide:
+                id: response_box_short
 
 switch:
   - platform: gpio
