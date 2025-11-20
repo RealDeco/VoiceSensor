@@ -697,11 +697,6 @@ text_sensor:
     id: current_time
     icon: mdi:clock
 
-  - platform: template
-    id: voice_assistant_phase_sensor
-    name: "Voice Assistant Phase ID"
-    update_interval: never
-
 event:
   # Event entity exposed to the user to automate on complex center button presses.
   # The simple press is not exposed as it is used to control the device itself.
@@ -1098,6 +1093,16 @@ script:
           data:
             node: ${name}
             text: !lambda return tts_text;
+  - id: set_phase
+    parameters:
+      phase: int
+    then:
+      - lambda: id(voice_assistant_phase) = phase;
+      - homeassistant.event:
+          event: esphome.phase_id
+          data:
+            node: ${name}
+            phase: !lambda return phase;
 
   - id: publish_current_time
     then:
@@ -1105,24 +1110,6 @@ script:
           // Publish current time
           auto time_now = id(homeassistant_time).now();
           id(current_time).publish_state(time_now.strftime("%H:%M"));
-
-  - id: set_phase
-    parameters:
-      phase: int
-    then:
-      - lambda: id(voice_assistant_phase) = phase;
-      - text_sensor.template.publish:
-          id: voice_assistant_phase_sensor
-          state: !lambda |-
-            char buf[8];
-            snprintf(buf, sizeof(buf), "%d", phase);
-            return std::string(buf);
-      - homeassistant.event:
-          event: esphome.phase_id
-          data:
-            node: ${name}
-            phase: !lambda return phase;
-
 
   - id: handle_screen_tap
     then:
