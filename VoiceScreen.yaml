@@ -6,7 +6,9 @@ substitutions:
   imagewidth: "480"
   imageheight: "480"
 
-# This device will receive from any device sending events to it, but for the touch of this display to work on sending device we need to know its name:
+## This device will receive from any device sending events to it, but for the touch of this display to work on sending device we need to know its name
+## Also needed to go to this device in home assistant/devices/esphome/settings and enabled "Allow the device to perform Home Assistant actions."
+
   voiceear_device: "esphome_web_530014" #(voicear)
 #  voiceear_device: "esphome_web_fa1d58" #respeaker lite
 
