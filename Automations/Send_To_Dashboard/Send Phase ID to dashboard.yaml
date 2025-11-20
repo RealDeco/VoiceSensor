@@ -1,0 +1,16 @@
+alias: Send Phase ID to dashboard (VoiceEar)
+description: ""
+triggers:
+  - trigger: event
+    event_type: esphome.phase_id
+    event_data:
+      node: esphome-web-530014
+conditions: []
+actions:
+  - action: input_text.set_value
+    target:
+      entity_id:
+        - input_text.phase_id_voiceear
+    data:
+      value: "{{ trigger.event.data.phase }}"
+mode: single
