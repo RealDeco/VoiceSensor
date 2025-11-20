@@ -1098,15 +1098,7 @@ script:
           data:
             node: ${name}
             text: !lambda return tts_text;
-  - id: send_phase_id_event
-    parameters:
-      phase_id: string
-    then:
-      - homeassistant.event:
-          event: esphome.phase_id
-          data:
-            node: ${name}
-            text: !lambda return phase_id;
+
   - id: publish_current_time
     then:
       - lambda: |-
@@ -1125,6 +1117,12 @@ script:
             char buf[8];
             snprintf(buf, sizeof(buf), "%d", phase);
             return std::string(buf);
+      - homeassistant.event:
+          event: esphome.phase_id
+          data:
+            node: ${name}
+            phase: !lambda return phase;
+
 
   - id: handle_screen_tap
     then:
