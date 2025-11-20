@@ -1,4 +1,4 @@
-alias: Send request, response and phase id to ESP (respeaker)
+alias: Send request, response and phase id to esp (voiceEar)
 description: ""
 triggers:
   - trigger: event
@@ -18,7 +18,7 @@ actions:
             id: stt
           - condition: template
             value_template: |
-              {{ trigger.event.data.node == 'esphome-web-fa1d58' }}
+              {{ trigger.event.data.node == 'esphome-web-530014' }}
         sequence:
           - action: esphome.esphome_web_c89274_receive_stt_text
             data:
@@ -28,7 +28,7 @@ actions:
             id: tts
           - condition: template
             value_template: |
-              {{ trigger.event.data.node == 'esphome-web-fa1d58' }}
+              {{ trigger.event.data.node == 'esphome-web-530014' }}
         sequence:
           - action: esphome.esphome_web_c89274_receive_tts_text
             data:
@@ -38,7 +38,7 @@ actions:
             id: phase
           - condition: template
             value_template: |
-              {{ trigger.event.data.node == 'esphome-web-fa1d58' }}
+              {{ trigger.event.data.node == 'esphome-web-530014' }}
         sequence:
           - action: esphome.esphome_web_c89274_receive_phase
             data:
