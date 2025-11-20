@@ -1,0 +1,46 @@
+alias: Send request, response and phase id to ESP (respeaker)
+description: ""
+triggers:
+  - trigger: event
+    event_type: esphome.stt_text
+    id: stt
+  - trigger: event
+    event_type: esphome.tts_text
+    id: tts
+  - trigger: event
+    event_type: esphome.phase_id
+    id: phase
+conditions: []
+actions:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: stt
+          - condition: template
+            value_template: |
+              {{ trigger.event.data.node == 'esphome-web-fa1d58' }}
+        sequence:
+          - action: esphome.esphome_web_c89274_receive_stt_text
+            data:
+              stt_text: "{{ trigger.event.data.text }}"
+      - conditions:
+          - condition: trigger
+            id: tts
+          - condition: template
+            value_template: |
+              {{ trigger.event.data.node == 'esphome-web-fa1d58' }}
+        sequence:
+          - action: esphome.esphome_web_c89274_receive_tts_text
+            data:
+              tts_text: "{{ trigger.event.data.text }}"
+      - conditions:
+          - condition: trigger
+            id: phase
+          - condition: template
+            value_template: |
+              {{ trigger.event.data.node == 'esphome-web-fa1d58' }}
+        sequence:
+          - action: esphome.esphome_web_c89274_receive_phase
+            data:
+              phase: "{{ trigger.event.data.phase | int }}"
+mode: single
