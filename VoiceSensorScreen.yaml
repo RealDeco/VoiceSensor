@@ -6,7 +6,7 @@ substitutions:
   imagewidth: "480"
   imageheight: "480"
 
-  voiceear: "esphome_web_530014"
+  voiceear: "esphome_web_530014" #(voicear)
 #  voiceear: "esphome_web_fa1d58" #respeaker lite
 
   # Voice assistant phases (must match the sending device)
@@ -170,7 +170,8 @@ text_sensor:
   - platform: homeassistant
     id: ts_phase
     internal: true
-    entity_id: sensor.${voiceear}_voice_assistant_phase_id
+#    entity_id: sensor.${voiceear}_voice_assistant_phase_id
+    entity_id: input_text.phase_id_voiceear
     on_value:
       then:
         - logger.log:
