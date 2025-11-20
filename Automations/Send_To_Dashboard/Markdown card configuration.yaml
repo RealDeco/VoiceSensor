@@ -1,0 +1,2 @@
+{% set t = states('input_text.airesponse_voiceear') %}
+{% if t | length < 150 %} ## {{ t }} {% else %} {{ t }} {% endif %}
