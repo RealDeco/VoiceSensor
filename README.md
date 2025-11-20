@@ -51,6 +51,11 @@ A compact 3-in-1 device combining a Voice Assistant, Presence Sensor, and Ambien
 
 ---
 
+### **`respeaker-satellite-base.yaml` custom version of the  official Respeaker-Lite-ESPHome-integration**
+
+* Use the original placement of the file (esphome/common/)
+---
+
 ### **`VoiceScreen.yaml` (Guition 4" 4848S040 with no mic.)**
 
 * Simple yaml that reads the phase id's from HA and display images accordingly
