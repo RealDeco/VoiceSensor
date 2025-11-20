@@ -36,17 +36,7 @@ A compact 3-in-1 device combining a Voice Assistant, Presence Sensor, and Ambien
 
 ## 📄 Files
 
-### **`VoiceSensorOLD.yaml` (SuperMini)**
-
-An older project from a couple of years back.
-
-* Very simple YAML, but *still works amazingly well*.
-* **No MicroWakeWord** (supports SuperMini that has no PSRAM).
-* **No timer functionality** included in the code.
-
----
-
-### **`VoiceSensorNEW.yaml` (ESP32-S3 Zero + inmp441 mic + ld2410c presence sensor + bm1750 light sensor)**
+### **`VoiceSensor.yaml` (ESP32-S3 Zero + inmp441 mic + ld2410c presence sensor + bm1750 light sensor)**
 
 * Works **only** with **ESP32-S3 Zero** (not SuperMini).
 * Zero includes **2MB PSRAM**, required for on-device MicroWakeWord.
@@ -61,23 +51,10 @@ An older project from a couple of years back.
 
 ---
 
-### **`VoiceSensorScreen.yaml` (Guition 4" 4848S040 with no mic)**
+### **`VoiceScreen.yaml` (Guition 4" 4848S040 with no mic.)**
 
 * Simple yaml that reads the phase id's from HA and display images accordingly
 * Can also control the "virtual touch" of the voicesensor by touching the display.
-
----
-
-### **`CustomButton.md`**
-
-* Display the phase id images on your Dashboard
-
----
-
-### **`request_response_to_dashboard_automation.yaml`** and
-### **`request_response_to_dashboard_card.md`**
-
-* show request and response text on dashboard
 
 ---
 
@@ -85,12 +62,6 @@ An older project from a couple of years back.
 
 * How to pass audio to another mediaplayer.
 
----
-
-### **`multisensorcase.3mf`**
-
-* 3D file for VoiceSensor Case
-* 
 ---
 
 ## 🛠️ Parts List
