@@ -1,13 +1,14 @@
 substitutions:
   name: esphome-web-c89274
-  friendly_name: Voicesensor Screen
+  friendly_name: VoiceScreen
 
   imagemodel1: "Luffy"
   imagewidth: "480"
   imageheight: "480"
 
-  voiceear: "esphome_web_530014" #(voicear)
-#  voiceear: "esphome_web_fa1d58" #respeaker lite
+# This device will receive from any device sending events to it, but for the touch of this display to work on sending device we need to know its name:
+#  voiceear_device: "esphome_web_530014" #(voicear)
+  voiceear_device: "esphome_web_fa1d58" #respeaker lite
 
   # Voice assistant phases (must match the sending device)
   voice_assist_idle_phase_id: "1"
@@ -450,7 +451,7 @@ touchscreen:
         - homeassistant.action:
             action: button.press
             data:
-              entity_id: button.${voiceear}_virtual_touch
+              entity_id: button.${voiceear_device}_virtual_touch
 
 binary_sensor:
   - platform: template
