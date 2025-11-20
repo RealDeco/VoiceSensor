@@ -1,6 +1,6 @@
 substitutions:
   name: esphome-web-530014
-  friendly_name: VoiceSensor
+  friendly_name: VoiceEar
 
   voice_assist_idle_phase_id: "1"
   voice_assist_waiting_for_command_phase_id: "2"
@@ -556,6 +556,11 @@ script:
             char buf[8];
             snprintf(buf, sizeof(buf), "%d", phase);
             return std::string(buf);
+      - homeassistant.event:
+          event: esphome.phase_id
+          data:
+            node: ${name}
+            phase: !lambda return phase;
 
   - id: handle_screen_tap
     then:
