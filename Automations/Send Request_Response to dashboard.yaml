@@ -1,4 +1,4 @@
-alias: request_response_to_dashboard (VoiceEar)
+alias: Send Request_Response to dashboard (VoiceEar)
 description: ""
 triggers:
   - trigger: event
