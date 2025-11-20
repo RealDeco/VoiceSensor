@@ -1,0 +1,66 @@
+alias: request_response_to_dashboard (VoiceEar)
+description: ""
+triggers:
+  - trigger: event
+    event_type: esphome.stt_text
+    id: request
+  - trigger: event
+    event_type: esphome.tts_text
+    id: response
+  - trigger: state
+    entity_id: assist_satellite.miniva_assist_satellite
+    to: idle
+    for:
+      seconds: 5
+    id: clear
+conditions: []
+actions:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: request
+          - condition: template
+            value_template: |
+              {{ trigger.event.data.node == 'esphome-web-530014'
+                 and trigger.event.data.text != '...' }}
+        sequence:
+          - target:
+              entity_id: input_text.airesponse_voiceear
+            data:
+              value: >
+                {% set prefix = 'You: ' %} {% set full = prefix ~
+                trigger.event.data.text %} {% if full|length > 250 %}
+                  {{ full[:247] ~ '...' }}
+                {% else %}
+                  {{ full }}
+                {% endif %}
+            action: input_text.set_value
+      - conditions:
+          - condition: trigger
+            id: response
+          - condition: template
+            value_template: |
+              {{ trigger.event.data.node == 'esphome-web-530014'
+                 and trigger.event.data.text != '...' }}
+        sequence:
+          - target:
+              entity_id: input_text.airesponse_voiceear
+            data:
+              value: >
+                {% set prefix = 'AI: ' %} {% set full = prefix ~
+                trigger.event.data.text %} {% if full|length > 250 %}
+                  {{ full[:247] ~ '...' }}
+                {% else %}
+                  {{ full }}
+                {% endif %}
+            action: input_text.set_value
+      - conditions:
+          - condition: trigger
+            id: clear
+        sequence:
+          - target:
+              entity_id: input_text.airesponse_voiceear
+            data:
+              value: ....
+            action: input_text.set_value
+mode: single
