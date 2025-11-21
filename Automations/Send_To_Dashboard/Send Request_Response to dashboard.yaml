@@ -8,8 +8,10 @@ triggers:
     event_type: esphome.tts_text
     id: response
   - trigger: state
-    entity_id: assist_satellite.voiceear_assist_satellite_assist_satellite
-    to: idle
+    entity_id:
+      - assist_satellite.voiceear_assist_satellite
+    to:
+      - idle
     for:
       seconds: 5
     id: clear
