@@ -150,7 +150,7 @@ Schematics
 
 ---
 
-## 📦 Assembly Notes
+## 📦 Assembly Notes (VoiceSensor)
 
 * Designed to fit inside a custom enclosure with accessible test pins.
 * **Minimal soldering required**, unless:
@@ -160,7 +160,7 @@ Schematics
 
 ---
 
-## ✨ Features
+## ✨ Features (Voicesensor)
 
 * 🗣️ **Local Voice Assistant**
   On-device processing with LED phase feedback.
