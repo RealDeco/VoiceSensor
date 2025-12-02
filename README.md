@@ -1,4 +1,9 @@
 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/802fff0f-d109-4112-8e00-402f8a40eb36" width="45%" />
+  <img src="https://github.com/user-attachments/assets/13dd2121-11b5-4d81-a2b5-1f88549423ca" width="45%" />
+</p>
+
 # 🎙️ VoiceSensor • VoiceEar • VoiceScreen
 
 ## Overview
@@ -63,26 +68,33 @@ Touching the screen sends button events back to the selected voice assistant dev
 ---
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/802fff0f-d109-4112-8e00-402f8a40eb36" width="45%" />
-  <img src="https://github.com/user-attachments/assets/13dd2121-11b5-4d81-a2b5-1f88549423ca" width="45%" />
-</p>
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/ee319024-1b9b-4d8f-b06a-33ce94c58ba0" width="45%" />
-  <img src="https://github.com/user-attachments/assets/b88e244e-7289-4f8b-a344-693752ce39c8" width="45%" />
 
+## 🟦 VoiceSensor DIY images
   
   <img src="https://github.com/user-attachments/assets/31278801-e4c6-4113-9ea9-fc64fe5d37d4" width="45%" />
   <img src="https://github.com/user-attachments/assets/f8d948ec-b0d3-48a9-a342-1229470f3cdc" width="45%" />
 </p>
 
 <p align="center">
-</p>
-
-<p align="center">
   <img src="https://github.com/user-attachments/assets/06bbc9ff-7d2f-4aa9-9395-547f1c3b3554" width="45%" />
   <img src="https://github.com/user-attachments/assets/7a953ff4-168c-42d4-afb0-72a4bac22e5e" width="45%" />
 </p>
+
+## 🟩 VoiceEar DIY images
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/64c078f4-0591-42e3-9cb2-cb7ef6e50c4c" width="45%" />
+  <img src="https://github.com/user-attachments/assets/c5962f42-a8f1-4350-b4e6-79be4bafe545" width="45%" />
+  <img src="https://github.com/user-attachments/assets/5a598133-c7a6-4f57-8aeb-2022d6cd9706" width="45%" />
+  <img src="https://github.com/user-attachments/assets/7ef6d772-2f51-43ef-a1bd-8c7ffb9a86cb" width="45%" />
+
+Schematics
+
+  <img src="https://github.com/user-attachments/assets/ee319024-1b9b-4d8f-b06a-33ce94c58ba0" width="45%" />
+  <img src="https://github.com/user-attachments/assets/b88e244e-7289-4f8b-a344-693752ce39c8" width="45%" />
+</p>
+
 
 ---
 
