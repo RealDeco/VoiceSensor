@@ -118,18 +118,13 @@ Schematics
 ### **`respeaker-satellite-base.yaml` custom version of the  official Respeaker-Lite-ESPHome-integration**
 
 * Use the original placement of the file (esphome/common/)
+
 ---
 
 ### **`VoiceScreen.yaml` (Guition 4" 4848S040 with no mic.)**
 
 * Simple yaml that reads the phase id's from HA and display images accordingly
 * Can also control the "virtual touch" of the voicesensor by touching the display.
-
----
-
-### **`tts_uri.md`**
-
-* How to pass audio to another mediaplayer.
 
 ---
 
