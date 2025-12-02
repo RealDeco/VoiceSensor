@@ -73,11 +73,10 @@ Touching the screen sends button events back to the selected voice assistant dev
 
   
   <img src="https://github.com/user-attachments/assets/31278801-e4c6-4113-9ea9-fc64fe5d37d4" width="45%" />
+  <img src="https://github.com/user-attachments/assets/f8d948ec-b0d3-48a9-a342-1229470f3cdc" width="45%" />
 </p>
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/f8d948ec-b0d3-48a9-a342-1229470f3cdc" width="45%" />
-  <img src="https://github.com/user-attachments/assets/fc48c042-4793-42a2-abfb-77fd1b28759b" width="45%" />
 </p>
 
 <p align="center">
