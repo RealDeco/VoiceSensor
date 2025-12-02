@@ -1,11 +1,64 @@
 
-# 🎙️ VoiceSensor & VoiceEar & VoiceScreen
+# 🎙️ VoiceSensor • VoiceEar • VoiceScreen
 
-why should a voice assistant device be 1 device when it could be 3? or why should sensors be 3 devices when they could be 1?
+## Overview
 
-A compact 3-in-1 device combining a Voice Assistant, Presence Sensor, and Ambient Light Sensor for Home Assistant
+For years, I’ve been advocating for **speakerless voice assistants** — mainly because 99% of us already have a media player in our homes, right?
 
-— or an “Ear-Only” setup without additional sensors using other devices for display and audio.
+This project contains three companion devices designed to work with Home Assistant and ESPHome: **VoiceSensor**, **VoiceEar**, and **VoiceScreen**.
+
+---
+
+## 🟦 VoiceSensor
+
+The original prototype of this project (and the name of this repo).
+
+It was a single device containing:
+
+* a microphone
+* a presence sensor
+* a light sensor
+
+The idea: these sensors naturally belong together and are usually mounted in the same place — high on a wall or ceiling.
+
+---
+
+## 🟩 VoiceEar ( the $4 VA :)
+
+A simpler version of VoiceSensor.
+It contains **only a microphone**, acting purely as an “ear” for your voice assistant.
+
+Audio responses can be sent to **any Home Assistant media player**, so the device itself does not need a speaker.
+
+---
+
+## 📡 Event Outputs
+
+All devices — VoiceSensor, VoiceEar, Respeaker Lite, and the entire Xiaozhi-ESPHome lineup — send the following events:
+
+* **Audio Path**
+  Used to route the assistant’s audio output to any chosen media player via automation.
+
+* **Request Text**
+  The recognized speech (what the user asked).
+  Can be forwarded to VoiceScreen or a dashboard.
+
+* **Response Text**
+  The assistant’s reply in text form.
+  Also sendable to VoiceScreen or dashboards.
+
+* **Phase ID**
+  The current pipeline step.
+  Useful for showing different visuals on VoiceScreen depending on the assistant’s state.
+
+---
+
+## 🖥️ VoiceScreen
+
+VoiceScreen is an ESP32-S3 display that acts as a **visual companion** to VoiceSensor, VoiceEar, and all devices from the Xiaozhi-ESPHome repository.
+
+It waits for incoming events and updates the display accordingly.
+Touching the screen sends button events back to the selected voice assistant device (e.g., Start / Stop listening).
 
 ---
 
