@@ -105,7 +105,7 @@ Schematics
 * Works **only** with **ESP32-S3 Zero** (not SuperMini).
 * Zero includes **2MB PSRAM**, required for on-device MicroWakeWord.
 * Supports **up to 2 wake words**, processed locally.
-* For outputting responses to an external media player, see: **[tts_uri.md](tts_uri.md)**
+* For outputting responses to an external media player, look in automations
 
 ---
 
