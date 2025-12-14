@@ -2,6 +2,7 @@
 <p align="center">
   <img src="https://github.com/user-attachments/assets/802fff0f-d109-4112-8e00-402f8a40eb36" width="45%" />
   <img src="https://github.com/user-attachments/assets/13dd2121-11b5-4d81-a2b5-1f88549423ca" width="45%" />
+  <img src="https://github.com/user-attachments/assets/75de7eb5-c6a2-4dfa-b62a-8bef1270046d" width="45%" />
 </p>
 
 # 🎙️ VoiceSensor • VoiceEar • VoiceScreen
